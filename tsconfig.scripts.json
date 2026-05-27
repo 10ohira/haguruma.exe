@@ -1,0 +1,12 @@
+{
+    "extends": "./tsconfig.json",
+    "compilerOptions": {
+      "outDir": "public/scripts", // scripts 폴더 내 파일의 출력 디렉토리
+      "sourceMap": false,
+      // Limit typeRoots to installed @types packages only
+      "typeRoots": ["node_modules/@types"],
+    },
+    // include script sources and the shared ambient type declarations
+    "include": ["src/scripts/**/*", "src/type.d.ts"], // scripts 내 모든 .ts 파일 포함
+    "exclude": []
+  }

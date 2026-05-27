@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>はぐるま</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="./output.css">
+</head>
+<body>
+    <!-- language selector -->
+    <select id="lang" class="text-sm">
+        <option value="en">English</option>
+        <option value="ko">한국어</option>
+        <option value="ja">日本語</option>
+        <option value="zh">中文</option>
+    </select>
+    <!-- back button -->
+    <button id="back" class="hide" aria-label="back"><i class="fa fa-chevron-left"></i></button>
+    <!-- in-app brand badge -->
+    <div id="brand" aria-hidden="true">
+        <span class="dot"></span>
+        <span class="name">はぐるま</span>
+        <span class="ver">v1.56.0</span>
+    </div>
+    <!-- login page -->
+    <div class="page" id="login">
+        <div class="hero">
+            <img src="./icon.svg" alt="icon">
+            <div class="wordmark">はぐるま</div>
+            <div class="meta">
+                <span>v1.56.0</span>
+                <span class="sep"></span>
+                <span>Precision</span>
+            </div>
+        </div>
+        <div class="form">
+            <!-- auto updater -->
+            <p id="updp" class="w-full text-center" data-lang="checking-for-updates"></p>
+            <div id="updbar" class="w-full bar hide flex rounded-full bg-neutral-300 h-2">
+                <div id="updprg" class="prg flex rounded-full bg-sky-400 h-2 transition-all" style="width: 0%;"></div>
+            </div>
+            <!-- token -->
+            <div id="logform" class="flex flex-col gap-1 hide">
+                <input id="key" type="password" data-lang-ph="key" class="w-full text-center">
+                <button id="logbtn" class="w-full" data-lang="login"></button>
+                <p id="logerr" class="w-full text-red-400 text-center"></p>
+            </div>
+        </div>
+    </div>
+    <!-- main page -->
+    <div class="page hide" id="app">
+        <section id="selector">
+            <button class="w-full selector" id="selector-initialize" data-lang="initialize"></button>
+            <button class="w-full selector" id="selector-cheats" data-lang="cheats"></button>
+            <button class="w-full selector" id="selector-macros" data-lang="macros"></button>
+            <button class="w-full selector" id="selector-settings" data-lang="settings"></button>
+            <button class="w-full selector" id="selector-server" data-lang="server"></button>
+            <button class="w-full selector" id="selector-plugins" data-lang="plugins"></button>
+            <button class="w-full selector hide" id="selector-finder" data-lang="finder"></button>
+            <button class="w-full selector hide" id="selector-dev-mode" data-lang="dev-mode"></button>
+            <button class="w-full selector hide" id="selector-console" data-lang="console"></button>
+        </section>
+        <section id="initialize" class="hide">
+            <div>
+                <input class="config w-full text-center" type="text" id="serial" data-lang-ph="serial" value="127.0.0.1:5555">
+            </div>
+            <div>
+                <div id="state-adb" class="state"></div>
+                <div data-lang="adb"></div>
+                <div id="state-adb-log" class="log"></div>
+            </div>
+            <div>
+                <div id="state-server" class="state"></div>
+                <div data-lang="server"></div>
+                <div id="state-server-log" class="log"></div>
+            </div>
+            <div>
+                <div id="state-frida" class="state"></div>
+                <div data-lang="frida"></div>
+                <div id="state-frida-log" class="log"></div>
+            </div>
+            <div>
+                <div id="state-session" class="state"></div>
+                <div data-lang="session"></div>
+                <div id="state-session-log" class="log"></div>
+            </div>
+            <div>
+                <button id="connect-adb" data-lang="connect-adb"></button>
+                <button id="connect-serial" data-lang="connect-serial"></button>
+            </div>
+            <div>
+                <button class="w-full" id="start-server" data-lang="start-server"></button>
+                <button class="w-full" id="download-server" data-lang="download-server"></button>
+                <button class="w-full" id="upload-server" data-lang="upload-server"></button>
+            </div>
+            <button id="connect-frida" data-lang="connect-frida"></button>
+            <div>
+                <input type="text" id="cookie" class="text-center w-full" data-lang-ph="cookie">
+                <button class="w-full" id="get-cookie" data-lang="get-cookie"></button>
+            </div>
+            <button id="start-agent" data-lang="start-agent"></button>
+        </section>
+        <section id="cheats" class="hide">
+            <div>
+                <input class="config w-full" type="text" id="epos-number" data-lang-ph="epos-number">
+            </div>
+            <div>
+                <div id="state-epos" class="state"></div>
+                <div data-lang="epos"></div>
+                <div id="state-epos-log" class="log"></div>
+            </div>
+            <div>
+                <div id="state-entity" class="state"></div>
+                <div data-lang="entity"></div>
+                <div id="state-entity-log" class="log"></div>
+            </div>
+            <div>
+                <input class="config w-full" type="text" id="except-number" data-lang-ph="except-number">
+                <input class="config" type="checkbox" id="except-reverse">
+            </div>
+            <div class="justify-between">
+                <div data-lang="show-layout"></div>
+                <input type="checkbox" id="show-layout">
+            </div>
+            <div class="justify-between">
+                <div data-lang="lock-layout"></div>
+                <input type="checkbox" id="lock-layout">
+            </div>
+            <!-- <div>
+                <button id="scan-epos" data-lang="scan-epos"></button>
+                <button id="scan-entity" data-lang="scan-entity"></button>
+                <button id="clear-all" data-lang="clear-all"></button>
+            </div>
+            <div>
+                <input type="text" id="key-scan-epos" class="min w-full keybind" data-lang-ph="keybind">
+                <input type="text" id="key-scan-entity" class="min w-full keybind" data-lang-ph="keybind">
+                <input type="text" id="key-clear-all" class="min w-full keybind" data-lang-ph="keybind">
+            </div> -->
+            <details data-cheat="aimbot">
+                <summary id="aimbot" data-lang="aimbot"></summary>
+                <main>
+                    <div data-lang="keybind"></div>
+                    <input type="text" id="key-aimbot" class="keybind" data-lang-ph="keybind">
+                </main>
+                <main>
+                    <div data-lang="aim-speed"></div>
+                    <input class="config" type="range" id="aimbot-speed" min="1" max="100" value="20">
+                </main>
+                <main>
+                    <div data-lang="aim-fov"></div>
+                    <input class="config" type="range" id="aimbot-limit" min="1" max="90" value="10">
+                </main>
+                <main>
+                    <div data-lang="aim-ignore-team"></div>
+                    <input class="config" type="checkbox" id="aimbot-ignore-team" checked>
+                </main>
+                <main>
+                    <div data-lang="aim-ignore-death"></div>
+                    <input class="config" type="checkbox" id="aimbot-ignore-death" checked>
+                </main>
+            </details>
+            <details data-cheat="aim-assist">
+                <summary id="aim-assist" data-lang="aim-assist"></summary>
+                <main>
+                    <div data-lang="aim-speed"></div>
+                    <input class="config" type="range" id="aim-assist-speed" min="1" max="100" value="15">
+                </main>
+                <main>
+                    <div data-lang="aim-fov"></div>
+                    <input class="config" type="range" id="aim-assist-limit" min="1" max="90" value="8">
+                </main>
+                <main>
+                    <div data-lang="aim-ignore-team"></div>
+                    <input class="config" type="checkbox" id="aim-assist-ignore-team" checked>
+                </main>
+                <main>
+                    <div data-lang="aim-ignore-death"></div>
+                    <input class="config" type="checkbox" id="aim-assist-ignore-death" checked>
+                </main>
+            </details>
+            <details data-cheat="aim-by-circle">
+                <summary id="aim-by-circle" data-lang="aim-by-circle"></summary>
+                <main>
+                    <div data-lang="keybind"></div>
+                    <input type="text" id="key-aim-by-circle" class="keybind" data-lang-ph="keybind">
+                </main>
+                <main>
+                    <div data-lang="aim-by-circle-radius"></div>
+                    <input class="config" type="range" id="aim-by-circle-radius" min="5" max="100" step="1" value="40">
+                </main>
+                <main>
+                    <div data-lang="aim-speed"></div>
+                    <input class="config" type="range" id="aim-by-circle-speed" min="1" max="100" value="25">
+                </main>
+                <main>
+                    <div data-lang="aim-by-circle-show-circle"></div>
+                    <input class="config" type="checkbox" id="aim-by-circle-show-circle" checked>
+                </main>
+                <main>
+                    <div data-lang="aim-by-circle-color"></div>
+                    <input class="config" type="color" id="aim-by-circle-color" value="#00ffff">
+                </main>
+                <main>
+                    <div data-lang="aim-ignore-team"></div>
+                    <input class="config" type="checkbox" id="aim-by-circle-ignore-team" checked>
+                </main>
+                <main>
+                    <div data-lang="aim-ignore-death"></div>
+                    <input class="config" type="checkbox" id="aim-by-circle-ignore-death" checked>
+                </main>
+            </details>
+            <!-- <details data-cheat="autoswap">
+                <summary id="autoswap" data-lang="autoswap"></summary>
+                <main>
+                    <div data-lang="autoswap-use-zoom"></div>
+                    <input class="config" type="checkbox" id="autoswap-use-zoom">
+                </main>
+                <main>
+                    <div data-lang="autoswap-main-keybind"></div>
+                    <input type="text" id="key-autoswap-main" class="keybind" data-lang-ph="keybind">
+                </main>
+                <main>
+                    <div data-lang="autoswap-sub-keybind"></div>
+                    <input type="text" id="key-autoswap-sub" class="keybind" data-lang-ph="keybind">
+                </main>
+                <main>
+                    <div data-lang="autoswap-zoom-keybind"></div>
+                    <input type="text" id="key-autoswap-zoom" class="keybind" data-lang-ph="keybind">
+                </main>
+                <main>
+                    <div data-lang="autoswap-subweapon"></div>
+                </main>
+                <main>
+                    <input class="config" type="number" min="0" max="9999" value="0" id="autoswap-subweapon-x" placeholder="X">
+                    <input class="config" type="number" min="0" max="9999" value="0" id="autoswap-subweapon-y" placeholder="Y">
+                    <button id="listen-sub" data-lang="autoswap-subweapon-listen" class="attached" disabled></button>
+                </main>
+                <main>
+                    <div data-lang="autoswap-mainweapon"></div>
+                </main>
+                <main>
+                    <input class="config" type="number" min="0" max="9999" value="0" id="autoswap-mainweapon-x" placeholder="X">
+                    <input class="config" type="number" min="0" max="9999" value="0" id="autoswap-mainweapon-y" placeholder="Y">
+                    <button id="listen-main" data-lang="autoswap-mainweapon-listen" class="attached" disabled></button>
+                </main>
+            </details> -->
+            <!-- Hidden: ESP / blackhole / shoot-speed and all non-aim cheats.
+                 Pixel keeps the aim panel minimal per user request — only
+                 aimbot / aim-assist / aim-by-circle / no-recoil / no-spread
+                 are exposed. Agent-side code for the hidden cheats is kept
+                 intact so saved configs and existing keybinds still work
+                 once a future build re-enables them in the panel. -->
+            <details data-cheat="no-recoil">
+                <summary class="no" id="no-recoil" data-lang="no-recoil"></summary>
+            </details>
+            <details data-cheat="no-spread">
+                <summary class="no" id="no-spread" data-lang="no-spread"></summary>
+            </details>
+            <details data-cheat="kicker">
+                <summary id="kicker" data-lang="kicker"></summary>
+                <main>
+                    <div data-lang="keybind"></div>
+                    <input type="text" id="key-kicker" class="keybind" data-lang-ph="keybind">
+                </main>
+                <main>
+                    <div data-lang="auto-kick"></div>
+                    <input class="config" type="checkbox" id="auto-kick">
+                </main>
+                <main>
+                    <div data-lang="auto-kick-ignore"></div>
+                    <input class="config" type="checkbox" id="auto-kick-ignore">
+                </main>
+                <main>
+                    <input type="text" id="kick-player-number" class="w-full text-center" data-lang-ph="user-id">
+                    <button class="w-full" id="kick-player" data-lang="kick"></button>
+                </main>
+            </details>
+            <details>
+                <summary data-lang="slot-kicker"></summary>
+                <main>
+                    <button class="w-full" id="kick-slot-0">1</button>
+                    <button class="w-full" id="kick-slot-1">2</button>
+                    <button class="w-full" id="kick-slot-2">3</button>
+                    <button class="w-full" id="kick-slot-3">4</button>
+                    <button class="w-full" id="kick-slot-4">5</button>
+                </main>
+                <main>
+                    <button class="w-full" id="kick-slot-5">6</button>
+                    <button class="w-full" id="kick-slot-6">7</button>
+                    <button class="w-full" id="kick-slot-7">8</button>
+                    <button class="w-full" id="kick-slot-8">9</button>
+                    <button class="w-full" id="kick-slot-9">10</button>
+                </main>
+                <main>
+                    <button class="w-full" id="kick-all-enemy" data-lang="kick-all-enemy"></button>
+                </main>
+                <main>
+                    <input type="number" id="kick-loop-slot" class="w-full text-center" min="1" max="10" value="1" data-lang-ph="slot">
+                    <input type="number" id="kick-loop-interval" class="w-full text-center" min="50" max="5000" value="200" data-lang-ph="interval-ms">
+                </main>
+                <main>
+                    <button class="w-full" id="kick-loop-start" data-lang="kick-loop-start"></button>
+                    <button class="w-full" id="kick-loop-stop" data-lang="kick-loop-stop"></button>
+                </main>
+            </details>
+            <details data-cheat="teleport">
+                <summary data-lang="teleport"></summary>
+                <main>
+                    <div data-lang="map"></div>
+                    <select id="teleport-map">
+                        <option value="1" data-lang="ctm-default"></option>
+                        <option value="2" data-lang="ctm-desert"></option>
+                        <option value="3" data-lang="ctm-castle"></option>
+                        <option value="4" data-lang="ctm-mountain"></option>
+                    </select>
+                </main>
+                <div class="w-full" data-lang="milk"></div>
+                <main>
+                    <button class="w-full teleport-btn" data-side="milk" data-index="0">1</button>
+                    <button class="w-full teleport-btn" data-side="milk" data-index="1">2</button>
+                    <button class="w-full teleport-btn" data-side="milk" data-index="2">3</button>
+                    <button class="w-full teleport-btn" data-side="milk" data-index="3">4</button>
+                </main>
+                <div class="w-full" data-lang="choco"></div>
+                <main>
+                    <button class="w-full teleport-btn" data-side="choco" data-index="0">1</button>
+                    <button class="w-full teleport-btn" data-side="choco" data-index="1">2</button>
+                    <button class="w-full teleport-btn" data-side="choco" data-index="2">3</button>
+                    <button class="w-full teleport-btn" data-side="choco" data-index="3">4</button>
+                </main>
+            </details>
+            <!-- Remaining non-aim cheats stay hidden (ESP, blackhole, fly,
+                 changer, utilities, etc.). Agent-side handlers are intact, so
+                 saved configs and keybinds still work when a future build
+                 re-enables them in the panel. -->
+        </section>
+        <section id="macros" class="hide">
+            <input type="text" data-lang-ph="search" id="search-macro" class="w-full">
+            <div id="macros-list">
+                <main>
+                    <div type="text" id="list-id" data-lang="id" class="w-full"></div>
+                    <button id="id-add" class="macro-apply w-16">+</button>
+                </main>
+                <main>
+                    <div type="text" id="list-id" data-lang="id" class="w-full"></div>
+                    <button id="id-add" class="w-16">+</button>
+                </main>
+                <main>
+                    <div type="text" id="list-id" data-lang="id" class="w-full"></div>
+                    <button id="id-add" class="w-16">+</button>
+                </main>
+            </div>
+        </section>
+        <section id="settings" class="hide">
+            <details>
+                <summary data-lang="general"></summary>
+                <main>
+                    <div data-lang="frame"></div>
+                    <input class="config" type="number" id="frame" min="1" max="120" value="60">
+                </main>
+            </details>
+        </section>
+        <section id="server" class="hide">
+            <details>
+                <summary data-lang="manager"></summary>
+                <div>
+                    <div id="state-express" class="state"></div>
+                    <div data-lang="server"></div>
+                    <div id="state-express-log" class="log"></div>
+                </div>
+                <div>
+                    <button class="w-full h-full" id="server-start" data-lang="start"></button>
+                    <button class="w-full h-full" id="server-stop" data-lang="stop"></button>
+                </div>
+                <main>
+                    <div data-lang="port"></div>
+                    <input class="config" type="number" id="server-port" min="1" max="65535" value="3000">
+                </main>
+            </details>
+            <details id="mobile-controller" class="hide">
+                <summary data-lang="mobile-controller"></summary>
+                <div class="text-neutral-400 text-sm">localhost:PORT/mobile</div>
+                <main>
+                    <div data-lang="gyro-scope"></div>
+                    <input class="config" type="checkbox" id="gyro-scope">
+                </main>
+                <main>
+                    <div data-lang="gyro-scope-use-gamma"></div>
+                    <input class="config" type="checkbox" id="gyro-scope-use-gamma">
+                </main>
+                <main>
+                    <div data-lang="gyro-scope-invert"></div>
+                    <input class="config" type="checkbox" id="gyro-scope-invert">
+                </main>
+                <main>
+                    <div data-lang="gyro-scope-sensitivity"></div>
+                    <input class="config" type="number" id="gyro-scope-sensitivity" min="1" max="100" value="10">
+                </main>
+            </details>
+        </section>
+        <section id="plugins" class="hide">
+            <details>
+                <summary data-lang="server"></summary>
+                <main>
+                    <div data-lang="mobile-controller"></div>
+                    <input class="config" type="checkbox" id="plugin-server-mobile-controller">
+                </main>
+            </details>
+            <details>
+                <summary data-lang="utility"></summary>
+                <main>
+                    <div data-lang="replay"></div>
+                    <input class="config" type="checkbox" id="plugin-utility-replay">
+                </main>
+            </details>
+        </section>
+        <section id="finder" class="hide overflow-hidden">
+            <div>
+                <input class="w-full" type="text" id="search-wp" data-lang-ph="search-player">
+            </div>
+            <div>
+                <select name="" id="search-wp-type" class="w-full">
+                    <option value="number" data-lang="number"></option>
+                    <option value="nickname" data-lang="nickname"></option>
+                </select>
+            </div>
+            <div id="finder-out"></div>
+        </section>
+        <section id="dev-mode" class="hide">
+            <details>
+                <summary data-lang="cmd"></summary>
+                <div>
+                    <input class="w-full" type="text" id="cmd" data-lang-ph="cmd">
+                </div>
+                <div>
+                    <button class="w-full" id="execute-cmd" data-lang="execute"></button>
+                </div>
+            </details>
+            <details>
+                <summary data-lang="ranges"></summary>
+                <div>
+                    <input class="w-full" type="text" id="base" data-lang-ph="base">
+                </div>
+                <div>
+                    <button class="w-full" id="get-ranges" data-lang="get"></button>
+                    <button class="w-full" id="find-ranges" data-lang="find"></button>
+                </div>
+            </details>
+            <details>
+                <summary data-lang="jit"></summary>
+                <div>
+                    <input class="w-full" type="text" id="pattern" data-lang-ph="pattern">
+                </div>
+                <div>
+                    <button class="w-full" id="search-pattern" data-lang="search"></button>
+                </div>
+            </details>
+            <details>
+                <summary data-lang="performance"></summary>
+                <main>
+                    <div data-lang="enable-performance"></div>
+                    <input type="checkbox" id="dev-perf">
+                </main>
+                <pre id="perf-out" class="text-xs"></pre>
+            </details>
+        </section>
+        <section id="console" class="hide">
+            <div id="console-out"></div>
+            <input type="text" id="console-input">
+        </section>
+    </div>
+    <script src="./renderer.js"></script>
+</body>
+</html>

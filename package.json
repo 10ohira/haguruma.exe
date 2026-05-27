@@ -1,0 +1,101 @@
+{
+  "name": "haguruma",
+  "version": "1.56.0",
+  "description": "はぐるま - milkchoco frida tool",
+  "main": "dist/index.js",
+  "scripts": {
+    "start": "electron .",
+    "dist": "electron-builder --publish never",
+    "watch": "concurrently \"tsc -w\" \"npx tailwindcss -i ./public/global.css -o ./public/output.css --watch\" \"tsc -w --project tsconfig.scripts.json\"",
+    "build": "node scripts/fetch-binaries.cjs && tsc && npx tailwindcss -i ./public/global.css -o ./public/output.css --minify && tsc --project tsconfig.scripts.json && node scripts/inject-offsets.cjs",
+    "fetch-binaries": "node scripts/fetch-binaries.cjs",
+    "inject-offsets": "node scripts/inject-offsets.cjs",
+    "clean:win": "rd /s /q dist && rd /s /q build && del public/output.css /q",
+    "clean:linux": "rm -rf dist build public/output.css",
+    "download:binding": "start https://github.com/frida/frida/releases/download/16.4.10/frida-v16.4.10-electron-v125-win32-x64.tar.gz",
+    "spawn": "frida -Uf com.gameparadiso.milkchoco -l public/scripts/inj.js",
+    "attach": "frida -UN com.gameparadiso.milkchoco -l public/scripts/inj.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@nut-tree-fork/nut-js": "^4.2.6",
+    "adb-ts": "^6.2.0",
+    "dotenv": "^17.2.3",
+    "electron-is-dev": "^2.0.0",
+    "electron-log": "^5.4.0",
+    "electron-updater": "^6.6.2",
+    "express": "^5.1.0",
+    "frida": "^16.4.10",
+    "node-global-key-listener": "^0.3.0",
+    "socket.io": "^4.8.1"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.2",
+    "@types/frida-gum": "^18.8.2",
+    "@types/node": "^22.15.29",
+    "adm-zip": "^0.5.17",
+    "autoprefixer": "^10.4.21",
+    "concurrently": "^9.1.2",
+    "cross-env": "^7.0.3",
+    "electron": "^31.4.0",
+    "electron-builder": "^25.0.5",
+    "frida-compile": "^18.0.0",
+    "postcss": "^8.5.6",
+    "postcss-loader": "^8.1.1",
+    "tailwindcss": "^3.4.17",
+    "typescript": "^5.8.3",
+    "xz-decompress": "^0.2.3"
+  },
+  "build": {
+    "appId": "com.tenohira.haguruma",
+    "productName": "はぐるま",
+    "win": {
+      "target": "nsis",
+      "icon": "./public/favicon.ico"
+    },
+    "nsis": {
+      "oneClick": true,
+      "artifactName": "はぐるま-Setup-${version}.exe"
+    },
+    "directories": {
+      "output": "build"
+    },
+    "files": [
+      "dist/**/*",
+      "public/**/*"
+    ],
+    "extraResources": [
+      {
+        "from": "./public",
+        "to": "./public",
+        "filter": [
+          "**/*",
+          "!global.css",
+          "!main.html",
+          "!layout.html"
+        ]
+      },
+      {
+        "from": "./bin",
+        "to": "./bin",
+        "filter": [
+          "**/*"
+        ]
+      }
+    ],
+    "publish": [
+      {
+        "provider": "github",
+        "private": true,
+        "owner": "10ohira",
+        "repo": "haguruma"
+      }
+    ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/10ohira/haguruma.git"
+  }
+}
