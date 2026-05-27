@@ -1574,9 +1574,11 @@ $_('server-stop').addEventListener('click', () => {ipcRenderer.send('server-stop
 // Developer tools initialization (perf toggle and output)
 initDevTools(ipcRenderer);
 
-// console
+// console — cap to keep DOM bounded; trim oldest lines once over CONSOLE_MAX
+const CONSOLE_MAX = 500;
 ipcRenderer.on('log', (e, ...args:any[]) => {
     console.log(...args);
+    const out = $_('console-out');
     const line = document.createElement('p');
     line.textContent = args.map(v => {
         if(typeof v === 'string') return v;
@@ -1584,8 +1586,10 @@ ipcRenderer.on('log', (e, ...args:any[]) => {
         if(typeof v === 'boolean') return v.toString();
         return JSON.stringify(v);
     }).join(' ');
-    $_('console-out').appendChild(line);
-    $_('console-out').scrollTo({top: $_('console-out').scrollHeight});
+    out.appendChild(line);
+    let overflow = out.childElementCount - CONSOLE_MAX;
+    while(overflow-- > 0 && out.firstChild) out.removeChild(out.firstChild);
+    out.scrollTop = out.scrollHeight;
 });
 
 $i('console-input').addEventListener('keydown', (e:KeyboardEvent) => {

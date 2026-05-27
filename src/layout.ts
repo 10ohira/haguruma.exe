@@ -48,10 +48,18 @@ const drawAimCircle = () => {
     ctx.restore();
 };
 
+// Reusable scratch arrays so the hot-path draw avoids per-rect allocations.
+const scratchUpX: number[] = [];
+const scratchUpY: number[] = [];
+const scratchDnX: number[] = [];
+const scratchDnY: number[] = [];
+
 ipcRenderer.on("draw", (event, data:DrawRect[]) => {
-    const halfWidth = canvas.width / 2;
-    const halfHeight = canvas.height / 2;
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    const w = canvas.width;
+    const h = canvas.height;
+    const halfWidth = w / 2;
+    const halfHeight = h / 2;
+    ctx.clearRect(0, 0, w, h);
     drawAimCircle();
     const tracer = configg['esp-tracer'] || false;
     const threed = configg['esp-3d'] || false;
@@ -59,30 +67,69 @@ ipcRenderer.on("draw", (event, data:DrawRect[]) => {
     const showTag = configg['esp-tag'] || false;
     const showBar = configg['esp-bar'] || false;
     const tagType = configg['esp-tag-type'] || 'both';
+    const onNumber = showTag && (tagType === 'number' || tagType === 'both');
+    const onNickname = showTag && (tagType === 'nickname' || tagType === 'both');
+    const colorDefault = configg['esp-color'] || 'red';
+    const colorTeam = configg['esp-team-color'] || colorDefault;
+    const colorMark = configg['esp-mark-color'] || colorDefault;
+    const colorDead = configg['esp-dead-color'] || colorDefault;
     ctx.textAlign = "center";
     ctx.textBaseline = "bottom";
     ctx.font = `${fontSize}px sans-serif`;
-    for (const rect of data) {
-        const value = (
-            rect.isDead ? configg['esp-dead-color'] :
-            rect.isMark ? configg['esp-mark-color'] :
-            rect.isTeam ? configg['esp-team-color'] :
-            configg['esp-color']) || 'red';
+    for (let r = 0; r < data.length; r++) {
+        const rect = data[r];
+        const value = rect.isDead ? colorDead
+            : rect.isMark ? colorMark
+            : rect.isTeam ? colorTeam
+            : colorDefault;
         ctx.fillStyle = value;
         ctx.strokeStyle = value;
-        const upside = rect.upside.map(point => ({ x: halfWidth + point.x * halfWidth, y: halfHeight + point.y * halfHeight }));
-        const downside = rect.downside.map(point => ({ x: halfWidth + point.x * halfWidth, y: halfHeight + point.y * halfHeight }));
-        const Xs = [...upside.map(point => point.x), ...downside.map(point => point.x)];
-        const Ys = [...upside.map(point => point.y), ...downside.map(point => point.y)];
-        const minX = Math.min(...Xs), maxX = Math.max(...Xs), minY = Math.min(...Ys), maxY = Math.max(...Ys);
+
+        const up = rect.upside;
+        const dn = rect.downside;
+        const upLen = up.length;
+        const dnLen = dn.length;
+
+        // Project + compute bbox in a single pass; no spreads, no temp arrays.
+        let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+        if (threed) {
+            scratchUpX.length = upLen; scratchUpY.length = upLen;
+            scratchDnX.length = dnLen; scratchDnY.length = dnLen;
+            for (let i = 0; i < upLen; i++) {
+                const px = halfWidth + up[i].x * halfWidth;
+                const py = halfHeight + up[i].y * halfHeight;
+                scratchUpX[i] = px; scratchUpY[i] = py;
+                if (px < minX) minX = px; if (px > maxX) maxX = px;
+                if (py < minY) minY = py; if (py > maxY) maxY = py;
+            }
+            for (let i = 0; i < dnLen; i++) {
+                const px = halfWidth + dn[i].x * halfWidth;
+                const py = halfHeight + dn[i].y * halfHeight;
+                scratchDnX[i] = px; scratchDnY[i] = py;
+                if (px < minX) minX = px; if (px > maxX) maxX = px;
+                if (py < minY) minY = py; if (py > maxY) maxY = py;
+            }
+        } else {
+            for (let i = 0; i < upLen; i++) {
+                const px = halfWidth + up[i].x * halfWidth;
+                const py = halfHeight + up[i].y * halfHeight;
+                if (px < minX) minX = px; if (px > maxX) maxX = px;
+                if (py < minY) minY = py; if (py > maxY) maxY = py;
+            }
+            for (let i = 0; i < dnLen; i++) {
+                const px = halfWidth + dn[i].x * halfWidth;
+                const py = halfHeight + dn[i].y * halfHeight;
+                if (px < minX) minX = px; if (px > maxX) maxX = px;
+                if (py < minY) minY = py; if (py > maxY) maxY = py;
+            }
+        }
+
         const barHeight = showBar ? 10 : 0;
-        if(showTag) {
-            const onNumber = tagType === 'number' || tagType === 'both'
-            const onNickname = tagType === 'nickname' || tagType === 'both'
+        if (showTag) {
             const tagText = `${onNumber ? `[${rect.number}]` : ""} ${onNickname ? rect.nickname : ""}`;
             ctx.fillText(tagText, minX + (maxX - minX) / 2, minY - barHeight);
         }
-        if(showBar) {
+        if (showBar) {
             const hpPerc = rect.hp / rect.total;
             const barPerc = rect.barrier / rect.total;
             const barWidth = maxX - minX;
@@ -96,25 +143,20 @@ ipcRenderer.on("draw", (event, data:DrawRect[]) => {
             ctx.globalAlpha = 1;
         }
         ctx.beginPath();
-        if(tracer){
-            ctx.moveTo(canvas.width / 2, 0);
+        if (tracer) {
+            ctx.moveTo(halfWidth, 0);
             ctx.lineTo(minX + (maxX - minX) / 2, minY);
         }
-        if(threed){
-            const lastUpIdx = upside.length - 1;
-            ctx.moveTo(upside[lastUpIdx].x, upside[lastUpIdx].y);
-            for (const point of upside) {
-                ctx.lineTo(point.x, point.y);
+        if (threed) {
+            ctx.moveTo(scratchUpX[upLen - 1], scratchUpY[upLen - 1]);
+            for (let i = 0; i < upLen; i++) ctx.lineTo(scratchUpX[i], scratchUpY[i]);
+            ctx.moveTo(scratchDnX[dnLen - 1], scratchDnY[dnLen - 1]);
+            for (let i = 0; i < dnLen; i++) ctx.lineTo(scratchDnX[i], scratchDnY[i]);
+            const verts = upLen < dnLen ? upLen : dnLen;
+            for (let i = 0; i < verts; i++) {
+                ctx.moveTo(scratchUpX[i], scratchUpY[i]);
+                ctx.lineTo(scratchDnX[i], scratchDnY[i]);
             }
-            const lastDownIdx = downside.length - 1;
-            ctx.moveTo(downside[lastDownIdx].x, downside[lastDownIdx].y);
-            for (const point of downside) {
-                ctx.lineTo(point.x, point.y);
-            }
-            upside.forEach((point, idx) => {
-                ctx.moveTo(point.x, point.y);
-                ctx.lineTo(downside[idx].x, downside[idx].y);
-            });
         } else {
             ctx.moveTo(minX, minY);
             ctx.lineTo(maxX, minY);
@@ -123,7 +165,6 @@ ipcRenderer.on("draw", (event, data:DrawRect[]) => {
             ctx.lineTo(minX, minY);
         }
         ctx.stroke();
-        ctx.closePath();
     }
 });
 
