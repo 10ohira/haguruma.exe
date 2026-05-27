@@ -1,40 +1,46 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg id="_레이어_1" data-name="레이어 1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 512 512">
+<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200">
   <defs>
-    <style>
-      .cls-1 {
-        fill: url(#_무제_그라디언트_188);
-      }
-
-      .cls-1, .cls-2, .cls-3 {
-        opacity: .8;
-      }
-
-      .cls-2 {
-        fill: url(#_무제_그라디언트_290);
-      }
-
-      .cls-3 {
-        fill: url(#_무제_그라디언트_258);
-      }
-    </style>
-    <linearGradient id="_무제_그라디언트_290" data-name="무제 그라디언트 290" x1="56.79" y1="52.38" x2="295.99" y2="291.59" gradientUnits="userSpaceOnUse">
-      <stop offset="0" stop-color="#e7f4ff"/>
-      <stop offset=".51" stop-color="#9aedff"/>
-      <stop offset="1" stop-color="#18ccff"/>
+    <linearGradient id="big" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#4f86e3"/>
+      <stop offset="1" stop-color="#2a5db8"/>
     </linearGradient>
-    <linearGradient id="_무제_그라디언트_188" data-name="무제 그라디언트 188" x1="240.29" y1="140.5" x2="462" y2="362.21" gradientUnits="userSpaceOnUse">
-      <stop offset="0" stop-color="#f8eaff"/>
-      <stop offset=".51" stop-color="#eaabff"/>
-      <stop offset="1" stop-color="#de36ff"/>
-    </linearGradient>
-    <linearGradient id="_무제_그라디언트_258" data-name="무제 그라디언트 258" x1="98.41" y1="251.76" x2="313.13" y2="466.48" gradientUnits="userSpaceOnUse">
-      <stop offset="0" stop-color="#fff4ec"/>
-      <stop offset=".51" stop-color="#ffeda6"/>
-      <stop offset="1" stop-color="#ffcc31"/>
+    <linearGradient id="small" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#f0b94a"/>
+      <stop offset="1" stop-color="#c88a1a"/>
     </linearGradient>
   </defs>
-  <rect class="cls-2" x="47.61" y="43.21" width="250.94" height="250.94"/>
-  <rect class="cls-1" x="231.79" y="132" width="232.6" height="232.6"/>
-  <rect class="cls-3" x="90.17" y="243.53" width="225.26" height="225.26"/>
+  <!-- big blue gear -->
+  <g transform="translate(72 78)" fill="url(#big)">
+    <circle cx="0" cy="0" r="48"/>
+    <g>
+      <rect x="-7" y="-66" width="14" height="22" rx="3"/>
+      <rect x="-7" y="44" width="14" height="22" rx="3"/>
+      <rect x="-66" y="-7" width="22" height="14" rx="3"/>
+      <rect x="44" y="-7" width="22" height="14" rx="3"/>
+      <g transform="rotate(45)">
+        <rect x="-7" y="-66" width="14" height="22" rx="3"/>
+        <rect x="-7" y="44" width="14" height="22" rx="3"/>
+        <rect x="-66" y="-7" width="22" height="14" rx="3"/>
+        <rect x="44" y="-7" width="22" height="14" rx="3"/>
+      </g>
+    </g>
+  </g>
+  <circle cx="72" cy="78" r="22" fill="#fbf6ec"/>
+  <!-- small yellow gear (intermeshing) -->
+  <g transform="translate(140 130)" fill="url(#small)">
+    <circle cx="0" cy="0" r="28"/>
+    <g>
+      <rect x="-4" y="-38" width="8" height="13" rx="2"/>
+      <rect x="-4" y="25" width="8" height="13" rx="2"/>
+      <rect x="-38" y="-4" width="13" height="8" rx="2"/>
+      <rect x="25" y="-4" width="13" height="8" rx="2"/>
+      <g transform="rotate(45)">
+        <rect x="-4" y="-38" width="8" height="13" rx="2"/>
+        <rect x="-4" y="25" width="8" height="13" rx="2"/>
+        <rect x="-38" y="-4" width="13" height="8" rx="2"/>
+        <rect x="25" y="-4" width="13" height="8" rx="2"/>
+      </g>
+    </g>
+  </g>
+  <circle cx="140" cy="130" r="11" fill="#fbf6ec"/>
 </svg>
