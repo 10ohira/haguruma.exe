@@ -109,7 +109,7 @@ app.on("ready", async () => {
         maximizable: false,
         fullscreenable: false,
         fullscreen: false,
-        backgroundColor: "#08080b",
+        backgroundColor: "#f4ede0",
         minWidth: 340,
         minHeight: 520,
     }, async () => {
