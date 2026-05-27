@@ -481,24 +481,11 @@ app.on("ready", async () => {
                                 ipcMain.on("change-NaN", (e) => {
                                     script.post(['change-NaN']);
                                 });
-                                ipcMain.on("unlock-all-item", (e, charid: number) => script.post(['unlock-all-item', charid]));
-                                ipcMain.on("unlock-all-char", (e) => script.post(['unlock-all-char']));
-                                ipcMain.on("get-daily-reward", (e, repeat: number) => script.post(['get-daily-reward', repeat]));
-                                ipcMain.on("change-ads-reward", (e) => script.post(['change-ads-reward']));
-
                                 ipcMain.on("kick-player", (e, number: number) => script.post(['kick-player', number]));
                                 ipcMain.on("kick-by-slot", (e, slot: number) => script.post(['kick-by-slot', slot]));
                                 ipcMain.on("kick-all-enemy", (e) => script.post(['kick-all-enemy']));
                                 ipcMain.on("kick-loop-start", (e, slot: number, interval: number) => script.post(['kick-loop-start', slot, interval]));
                                 ipcMain.on("kick-loop-stop", (e) => script.post(['kick-loop-stop']));
-
-                                ipcMain.on("change-nickname", (e, name: string) => script.post(['change-nickname', name]));
-                                ipcMain.on("purchase-pass", (e, num: number, item: number) => script.post(['purchase-pass', num, item]));
-                                ipcMain.on("server-exploit", (e) => script.post(['server-exploit']));
-                                ipcMain.on("create-clan", (e, name: string) => script.post(['create-clan', name]));
-                                ipcMain.on("break-clan", (e) => script.post(['break-clan']));
-                                ipcMain.on("buy-clan-gold", (e, amount: number) => script.post(['buy-clan-gold', amount]));
-                                ipcMain.on("equip-item", (e, char: number, slot: number, number: number) => script.post(['equip-item', char, slot, number]));
 
                                 ipcMain.on("ctm-default-milk", (e) => script.post(['ctm-default-milk']));
                                 ipcMain.on("ctm-default-choco", (e) => script.post(['ctm-default-choco']));
@@ -540,21 +527,11 @@ app.on("ready", async () => {
                                 ipcMain.removeAllListeners("clear-all");
                                 ipcMain.removeAllListeners("except-number");
                                 ipcMain.removeAllListeners("change-NaN");
-                                ipcMain.removeAllListeners("change-ads-reward");
-                                ipcMain.removeAllListeners("unlock-all-item");
-                                ipcMain.removeAllListeners("get-daily-reward");
                                 ipcMain.removeAllListeners("kick-player");
                                 ipcMain.removeAllListeners("kick-by-slot");
                                 ipcMain.removeAllListeners("kick-all-enemy");
                                 ipcMain.removeAllListeners("kick-loop-start");
                                 ipcMain.removeAllListeners("kick-loop-stop");
-                                ipcMain.removeAllListeners("change-nickname");
-                                ipcMain.removeAllListeners("purchase-pass");
-                                ipcMain.removeAllListeners("server-exploit");
-                                ipcMain.removeAllListeners("create-clan");
-                                ipcMain.removeAllListeners("break-clan");
-                                ipcMain.removeAllListeners("buy-clan-gold");
-                                ipcMain.removeAllListeners("equip-item");
                                 ipcMain.removeAllListeners("get-ranges");
                                 ipcMain.removeAllListeners("find-ranges");
                                 ipcMain.removeAllListeners("execute-cmd");

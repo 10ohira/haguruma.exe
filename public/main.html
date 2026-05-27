@@ -214,7 +214,7 @@
                     <input class="config" type="checkbox" id="aim-by-circle-ignore-death" checked>
                 </main>
             </details>
-            <!-- <details data-cheat="autoswap">
+            <details data-cheat="autoswap">
                 <summary id="autoswap" data-lang="autoswap"></summary>
                 <main>
                     <div data-lang="autoswap-use-zoom"></div>
@@ -248,13 +248,123 @@
                     <input class="config" type="number" min="0" max="9999" value="0" id="autoswap-mainweapon-y" placeholder="Y">
                     <button id="listen-main" data-lang="autoswap-mainweapon-listen" class="attached" disabled></button>
                 </main>
-            </details> -->
-            <!-- Hidden: ESP / blackhole / shoot-speed and all non-aim cheats.
-                 Pixel keeps the aim panel minimal per user request — only
-                 aimbot / aim-assist / aim-by-circle / no-recoil / no-spread
-                 are exposed. Agent-side code for the hidden cheats is kept
-                 intact so saved configs and existing keybinds still work
-                 once a future build re-enables them in the panel. -->
+            </details>
+            <details data-cheat="esp">
+                <summary id="esp" data-lang="esp"></summary>
+                <main>
+                    <div data-lang="keybind"></div>
+                    <input type="text" id="key-esp" class="keybind" data-lang-ph="keybind">
+                </main>
+                <main>
+                    <div data-lang="esp-tracer"></div>
+                    <input class="config" type="checkbox" id="esp-tracer">
+                </main>
+                <main>
+                    <div data-lang="esp-3d"></div>
+                    <input class="config" type="checkbox" id="esp-3d">
+                </main>
+                <main>
+                    <div data-lang="esp-font-size"></div>
+                    <input class="config" type="range" id="esp-font-size" min="8" max="32" value="12">
+                </main>
+                <main>
+                    <div data-lang="esp-tag-type"></div>
+                    <select id="esp-tag-type" class="config">
+                        <option value="both" data-lang="both"></option>
+                        <option value="number" data-lang="number"></option>
+                        <option value="nickname" data-lang="nickname"></option>
+                    </select>
+                </main>
+                <main>
+                    <div data-lang="esp-bar"></div>
+                    <input class="config" type="checkbox" id="esp-bar" checked>
+                </main>
+                <main>
+                    <div data-lang="esp-color"></div>
+                    <input class="config" type="color" id="esp-color" value="#ff0000">
+                </main>
+                <main>
+                    <div data-lang="esp-mark-color"></div>
+                    <input class="config" type="color" id="esp-mark-color" value="#ffff00">
+                </main>
+                <main>
+                    <div data-lang="esp-team-color"></div>
+                    <input class="config" type="color" id="esp-team-color" value="#00ff00">
+                </main>
+                <main>
+                    <div data-lang="esp-dead-color"></div>
+                    <input class="config" type="color" id="esp-dead-color" value="#808080">
+                </main>
+                <main>
+                    <div data-lang="esp-pitch-offset"></div>
+                    <input class="config" type="range" id="esp-pitch-offset" min="-90" max="90" value="0">
+                </main>
+                <main>
+                    <div data-lang="esp-mark-keybind"></div>
+                    <input type="text" id="key-esp-mark" class="keybind" data-lang-ph="keybind">
+                </main>
+            </details>
+            <details data-cheat="blackhole">
+                <summary id="blackhole" data-lang="blackhole"></summary>
+                <main>
+                    <div data-lang="keybind"></div>
+                    <input type="text" id="key-blackhole" class="keybind" data-lang-ph="keybind">
+                </main>
+                <main>
+                    <div data-lang="blackhole-target"></div>
+                    <select id="blackhole-target" class="config">
+                        <option value="crosshair" data-lang="crosshair"></option>
+                        <option value="position" data-lang="position"></option>
+                    </select>
+                </main>
+                <main>
+                    <div data-lang="blackhole-distance"></div>
+                    <input class="config" type="range" id="blackhole-distance" min="1" max="100" value="20">
+                </main>
+                <main>
+                    <div data-lang="blackhole-position"></div>
+                </main>
+                <main>
+                    <input class="config" type="number" id="blackhole-x" placeholder="X" value="0">
+                    <input class="config" type="number" id="blackhole-y" placeholder="Y" value="0">
+                    <input class="config" type="number" id="blackhole-z" placeholder="Z" value="0">
+                </main>
+                <main>
+                    <div data-lang="blackhole-ignore"></div>
+                    <input class="config" type="checkbox" id="blackhole-ignore">
+                </main>
+                <main>
+                    <div data-lang="blackhole-ignore-team"></div>
+                    <input class="config" type="checkbox" id="blackhole-ignore-team">
+                </main>
+                <main>
+                    <div data-lang="blackhole-ignore-death"></div>
+                    <input class="config" type="checkbox" id="blackhole-ignore-death">
+                </main>
+                <main>
+                    <div data-lang="blackhole-prevent-lagger"></div>
+                    <input class="config" type="checkbox" id="blackhole-prevent-lagger">
+                </main>
+                <main>
+                    <div data-lang="blackhole-force-drop"></div>
+                    <input class="config" type="checkbox" id="blackhole-force-drop">
+                </main>
+            </details>
+            <details data-cheat="fly">
+                <summary id="fly" data-lang="fly"></summary>
+                <main>
+                    <div data-lang="fly-up-keybind"></div>
+                    <input type="text" id="key-fly-up" class="keybind" data-lang-ph="keybind">
+                </main>
+                <main>
+                    <div data-lang="fly-down-keybind"></div>
+                    <input type="text" id="key-fly-down" class="keybind" data-lang-ph="keybind">
+                </main>
+                <main>
+                    <div data-lang="fly-speed"></div>
+                    <input class="config" type="range" id="fly-speed" min="1" max="50" value="5">
+                </main>
+            </details>
             <details data-cheat="no-recoil">
                 <summary class="no" id="no-recoil" data-lang="no-recoil"></summary>
             </details>
@@ -334,10 +444,6 @@
                     <button class="w-full teleport-btn" data-side="choco" data-index="3">4</button>
                 </main>
             </details>
-            <!-- Remaining non-aim cheats stay hidden (ESP, blackhole, fly,
-                 changer, utilities, etc.). Agent-side handlers are intact, so
-                 saved configs and keybinds still work when a future build
-                 re-enables them in the panel. -->
         </section>
         <section id="macros" class="hide">
             <input type="text" data-lang-ph="search" id="search-macro" class="w-full">

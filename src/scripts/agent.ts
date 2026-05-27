@@ -133,19 +133,7 @@ let perfLast = Date.now();
 
 let setYaw: any = null;
 let setPitch: any = null;
-let unlockChar: any = null;
-let unlockAllChar: any = null;
-let buyClanGold: any = null;
-let getDailyReward: any = null;
-let adsRequestShopADReward: any = null;
-let onRewarded: any = null;
-let purchaseP: any = null;
 let purchaseT: any = null;
-let changeNickname: any = null;
-let exploitServer: any = null;
-let createClan: any = null;
-let breakClan: any = null;
-let equip: any = null;
 
 let elec: any = null;
 let mago: any = null;
@@ -340,72 +328,9 @@ function init(){
                 const str2 = args[2].readPointer().readCString();
             },
         })
-        const item = makeNFunc(agentSyms['buy.buyItem'], 'void', ['uchar', 'uchar', 'uchar', 'uchar']);
         setYaw = makeNFunc(agentSyms['camera.setCameraAngleX'], 'void', ['float']);
         setPitch = makeNFunc(agentSyms['camera.setCameraAngleY'], 'void', ['float']);
-        unlockChar = (charId: number) => {
-            for(let i = 1; i <= 255; i++){item(charId, 0, i, 1)}
-            for(let i = 1; i <= 255; i++){item(charId, 1, i, 1)}
-            for(let i = 1; i <= 384; i++){item(charId, 2, i, 1)}
-            for(let i = 1; i <= 384; i++){item(charId, 3, i, 1)}
-            for(let i = 1; i <= 384; i++){item(charId, 4, i, 1)}
-            for(let i = 1; i <= 32; i++){item(charId, 5, i, 90)}
-            for(let i = 1; i <= 127; i++){item(charId, 6, i, 1)}
-            for(let i = 1; i <= 127; i++){item(charId, 7, i, 1)}
-        };
-        unlockAllChar = () => {
-            for(let i = 1; i <= 255; i++){
-                makeNFunc(agentSyms['buy.buyCharacter'], 'void', ['uchar'])(i);
-            }
-        };
-        buyClanGold = makeNFunc(agentSyms['buy.buyWithClanGold'], 'void', ['uchar']);
-        getDailyReward = makeNFunc(agentSyms['global.sendReqDailyBonus'], 'void', ['uchar']);
-        adsRequestShopADReward = makeNFunc(agentSyms['ad.adsRequestShopADReward'], 'void', ['uchar']);
-        onRewarded = makeNFunc(agentSyms['ad.onRewarded'], 'void', []);
-
-        // Always-on bypass for the in-client daily/per-ad limit checks. The
-        // server still enforces what it enforces, but the client UI stops
-        // gating buttons after the local "you've watched N ads today" / "wait
-        // M seconds" counters expire. forceTrue keeps the original args/regs
-        // untouched and only overwrites the boolean return on the way out.
-        const forceTrue = (sym: string) => {
-            const addr = Module.findExportByName(libName, sym);
-            if(!addr) {
-                console.log("[ad-limit-bypass] missing symbol:", sym);
-                return;
-            }
-            Interceptor.attach(addr, { onLeave(retval) { retval.replace(ptr(1)); } });
-        };
-        forceTrue(agentSyms['ad.isAvailableAds']);
-        forceTrue(agentSyms['ad.isAvailableCount']);
-        forceTrue(agentSyms['ad.isAvailableTime']);
-        forceTrue(agentSyms['ad.isAvailableInitCycle']);
-        forceTrue(agentSyms['ad.isAvailableShopADCount']);
-        forceTrue(agentSyms['ad.isAvailableShopADTime']);
-        forceTrue(agentSyms['ad.isAvailableShopADInitCycle']);
-        forceTrue(agentSyms['ad.isAvailableCountBattleRoyal']);
-        forceTrue(agentSyms['ad.isAvailableTimeBattleRoyal']);
-        forceTrue(agentSyms['ad.isAvailableInitCycleBattleRoyal']);
-        purchaseP = makeNFunc(agentSyms['global.sendPurchasePass'], 'void', ['uint', 'uchar']);
         purchaseT = makeNFunc(agentSyms['global.sendPurchasePassTier'], 'void', ['uint', 'uchar']);
-        changeNickname = (name:string) => {
-            const sp = Memory.allocUtf8String(name);
-            makeNFunc(agentSyms['global.changeNickname'], 'void', ["uchar", "pointer", "uchar"])(1, sp, 0);
-        }
-        exploitServer = () => {
-            makeNFunc(agentSyms['global.sendReqPassReward'], 'void', ['uint', 'uint', 'uchar', 'uchar', 'uchar'])(1, 100, 1, 1, 1);
-        }
-        createClan = (name:string = genRandom(), desc:string = " ", mark:number = 0, flag:number = 151) => {
-            const npt = Memory.allocUtf8String(name);
-            const dpt = Memory.allocUtf8String(desc);
-            const nobj = Memory.alloc(Process.pageSize);
-            const dobj = Memory.alloc(Process.pageSize);
-            nobj.writePointer(npt);
-            dobj.writePointer(dpt);
-            makeNFunc(agentSyms['clan.clanCreate'], 'void', ["pointer", "pointer", "uchar", "uchar"])(nobj, dobj, mark, flag);
-        }
-        breakClan = () => makeNFunc(agentSyms['clan.clanBreakup'], 'void', []);
-        equip = makeNFunc(agentSyms['buy.equipShort'], 'void', ['uchar', 'uchar', 'uint16']);
         elec = makeNFunc(agentSyms['ingame.buffHitElectric'], 'void', ['pointer', 'uint', 'uint']);
         mago = makeNFunc(agentSyms['ingame.debuffSkillMagoTotem'], 'void', ['uint', 'uint']);
         fMatchKickUserSlot = makeNFunc(agentSyms['fmatch.kickUserSlot'], 'void', ['uchar']);
@@ -644,33 +569,8 @@ function init(){
                     pos(args[0]);
                 } else if(name === 'skillcode'){
                     skillcode(+args[0]);
-                } else if(name === 'change-ads-reward'){
-                    // Single-tap ad reward: directly send the shop-AD reward
-                    // packet for every shop slot (so the user gets all
-                    // available rewards in one click) and fire the local
-                    // OnRewarded callback so the in-client UI updates.
-                    if(!adsRequestShopADReward) return recv(api);
-                    for(let slot = 0; slot < 20; slot++){
-                        try { adsRequestShopADReward(slot); } catch(_) {}
-                    }
-                    if(onRewarded){
-                        try { onRewarded(); } catch(_) {}
-                    }
                 } else if(name === 'change-NaN'){
                     beNaN();
-                } else if(name === 'unlock-all-item'){ unlockChar(+args[0] || 0);
-                } else if(name === 'unlock-all-char'){ unlockAllChar();
-                } else if(name === 'buy-clan-gold'){ 
-                    const amount = +args[0] || 1;
-                    for(let i = 0; i < amount; i++){
-                        buyClanGold(3);
-                    }
-                } else if(name === 'get-daily-reward'){ 
-                    const amount = +args[0] || 1;
-                    for(let i = 0; i < amount; i++){
-                        getDailyReward(0);
-                        getDailyReward(1);
-                    }
                 } else if(name === 'kick-player'){ purchaseT(+args[0] || 0, 0);
                 } else if(name === 'kick-by-slot'){
                     if(!fMatchKickUserSlot) return recv(api);
@@ -689,12 +589,6 @@ function init(){
                     });
                 } else if(name === 'kick-loop-start'){ kickLoopStart(+args[0] || 0, +args[1] || 200);
                 } else if(name === 'kick-loop-stop'){ kickLoopStop();
-                } else if(name === 'change-nickname'){ changeNickname(args[0] || 'no name');
-                } else if(name === 'purchase-pass'){ purchaseP(+args[0] || 0, +args[1] || 0);
-                } else if(name === 'server-exploit'){ exploitServer();
-                } else if(name === 'create-clan'){ createClan(args[0] || genRandom());
-                } else if(name === 'break-clan'){ breakClan();
-                } else if(name === 'equip-item'){ equip(+args[0] || 1, +args[1] || 0, +args[2] || 0);
                 } else if(name === 'ctm-default-milk'){ ctmDefaultMilk();
                 } else if(name === 'ctm-default-choco'){ ctmDefaultChoco();
                 } else if(name === 'ctm-desert-milk'){ ctmDesertMilk();
@@ -2050,15 +1944,6 @@ function kickLoopStop(){
     send(['kick-loop', 'stopped']);
 }
 
-function genRandom(length: number = 9): string {
-    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    let result = '';
-    for (let i = 0; i < length; i++) {
-      const randIndex = Math.floor(Math.random() * chars.length);
-      result += chars[randIndex];
-    }
-    return result;
-}
 function getChainedPointer(_bs:NativePointer, iter:number[]):NativePointer{
     let pt = _bs;
     for(let offset of iter){
