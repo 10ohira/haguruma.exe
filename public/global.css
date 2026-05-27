@@ -207,7 +207,12 @@ canvas {
 }
 #back:hover  { background-color: var(--surface-hover); }
 #back:active { background-color: var(--surface-active); }
-#back i { font-size: 11px; }
+#back::before {
+    content: '';
+    width: 10px;
+    height: 14px;
+    background: no-repeat center / contain url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='14' viewBox='0 0 10 14'><path d='M7 2 L2 7 L7 12' fill='none' stroke='%231f1a14' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+}
 
 /* ===== Brand badge (in-app top center) ===== */
 #brand {
@@ -622,6 +627,10 @@ button:disabled, input:disabled, select:disabled, textarea:disabled {
     padding: 4px 0 6px;
 }
 
+/* explicit override: .hide on selector buttons must beat the display: flex
+   declaration below (which has #id + .class specificity = 0,1,1,0) */
+#selector .selector.hide { display: none !important; }
+
 #selector .selector {
     display: flex !important;
     align-items: center;
@@ -639,50 +648,52 @@ button:disabled, input:disabled, select:disabled, textarea:disabled {
     letter-spacing: 0.06em;
     text-transform: uppercase;
 }
+/* Inline SVG icons via background-image so the app works offline (no
+   FontAwesome CDN dependency). Each icon is a data: URI sized 22×22
+   with the glyph centered. */
 #selector .selector::before {
-    font-family: 'FontAwesome';
+    content: '';
     display: inline-flex;
-    align-items: center;
-    justify-content: center;
     width: 22px;
     height: 22px;
-    background: var(--ink-1);
-    color: var(--bg-base);
-    font-size: 11px;
+    background-color: var(--ink-1);
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 14px 14px;
     flex-shrink: 0;
     transition: background-color var(--duration) var(--ease);
 }
 #selector .selector::after {
-    content: '\f105';
-    font-family: 'FontAwesome';
+    content: '';
     margin-left: auto;
-    color: var(--ink-4);
-    font-size: 13px;
-    transition: transform var(--duration) var(--ease);
+    width: 10px;
+    height: 14px;
+    background: no-repeat center / contain url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='14' viewBox='0 0 10 14'><path d='M3 2 L8 7 L3 12' fill='none' stroke='%238a8275' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+    transition: transform var(--duration) var(--ease), background-image var(--duration) var(--ease);
 }
 #selector .selector:hover {
     color: var(--ink-1);
     background: var(--bg-1);
 }
 #selector .selector:hover::before {
-    background: var(--orange);
-    color: #fff;
+    background-color: var(--orange);
 }
 #selector .selector:hover::after {
     transform: translateX(3px);
-    color: var(--orange);
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='14' viewBox='0 0 10 14'><path d='M3 2 L8 7 L3 12' fill='none' stroke='%23c45a2c' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/></svg>");
 }
 #selector .selector:active { background: var(--surface-active); }
 
-#selector-initialize::before { content: '\f135'; }
-#selector-cheats::before     { content: '\f140'; }
-#selector-macros::before     { content: '\f0e7'; }
-#selector-settings::before   { content: '\f013'; }
-#selector-server::before     { content: '\f233'; }
-#selector-plugins::before    { content: '\f12e'; }
-#selector-finder::before     { content: '\f002'; }
-#selector-dev-mode::before   { content: '\f121'; }
-#selector-console::before    { content: '\f120'; }
+/* Each selector button's icon — white stroke on charcoal chip */
+#selector-initialize::before { background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23f4ede0' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M5 5h6v6H5zM13 5h6v6h-6zM5 13h6v6H5zM13 13h6v6h-6z'/></svg>"); }
+#selector-cheats::before     { background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23f4ede0' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><circle cx='12' cy='12' r='9'/><circle cx='12' cy='12' r='5'/><circle cx='12' cy='12' r='1.5' fill='%23f4ede0'/></svg>"); }
+#selector-macros::before     { background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23f4ede0' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polygon points='13,2 4,14 11,14 9,22 19,9 13,9' fill='%23f4ede0'/></svg>"); }
+#selector-settings::before   { background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23f4ede0' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><circle cx='12' cy='12' r='3'/><path d='M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z'/></svg>"); }
+#selector-server::before     { background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23f4ede0' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><rect x='2' y='3' width='20' height='6' rx='1'/><rect x='2' y='15' width='20' height='6' rx='1'/><circle cx='6' cy='6' r='0.6' fill='%23f4ede0'/><circle cx='6' cy='18' r='0.6' fill='%23f4ede0'/></svg>"); }
+#selector-plugins::before    { background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23f4ede0' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M19 11a2 2 0 0 1 0 4h-1v3a2 2 0 0 1-2 2h-3a2 2 0 0 1 0-4v-1h-4v1a2 2 0 0 1 0 4H6a2 2 0 0 1-2-2v-3H3a2 2 0 0 1 0-4h1v-1h0a2 2 0 0 1 0-4h1V5a2 2 0 0 1 2-2h3v0a2 2 0 0 1 4 0v0h3a2 2 0 0 1 2 2v3h0a2 2 0 0 1 0 4z'/></svg>"); }
+#selector-finder::before     { background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23f4ede0' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><circle cx='11' cy='11' r='7'/><line x1='21' y1='21' x2='16' y2='16'/></svg>"); }
+#selector-dev-mode::before   { background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23f4ede0' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='8,18 2,12 8,6'/><polyline points='16,6 22,12 16,18'/></svg>"); }
+#selector-console::before    { background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23f4ede0' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><rect x='2' y='3' width='20' height='18' rx='1'/><polyline points='6,8 10,12 6,16'/><line x1='12' y1='16' x2='17' y2='16'/></svg>"); }
 
 /* ===== Details / Accordions ===== */
 #app > section > details {
@@ -708,12 +719,11 @@ button:disabled, input:disabled, select:disabled, textarea:disabled {
 #app > section > details > summary::-webkit-details-marker { display: none; }
 #app > section > details > summary:hover { background: var(--bg-1); }
 #app > section > details > summary:not(.no)::before {
-    content: '\f105';
-    font-family: 'FontAwesome';
-    color: var(--ink-3);
-    font-size: 11px;
-    width: 12px;
-    text-align: center;
+    content: '';
+    width: 10px;
+    height: 14px;
+    background: no-repeat center / contain url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='14' viewBox='0 0 10 14'><path d='M3 2 L8 7 L3 12' fill='none' stroke='%235d564b' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+    flex-shrink: 0;
     transition: transform var(--duration) var(--ease);
 }
 #app > section > details > summary.no::before {
@@ -732,7 +742,7 @@ button:disabled, input:disabled, select:disabled, textarea:disabled {
 }
 #app > section > details[open] > summary:not(.no)::before {
     transform: rotate(90deg);
-    color: var(--orange);
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='14' viewBox='0 0 10 14'><path d='M3 2 L8 7 L3 12' fill='none' stroke='%23c45a2c' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/></svg>");
 }
 #app > section > details[open] > summary {
     background: var(--bg-3);
@@ -970,15 +980,16 @@ button#listen-main.listening {
 #finder-out details summary::-webkit-details-marker { display: none; }
 #finder-out details summary:hover { background: var(--bg-1); }
 #finder-out details summary::before {
-    content: '\f105';
-    font-family: 'FontAwesome';
-    font-size: 10px;
-    color: var(--ink-3);
+    content: '';
+    width: 10px;
+    height: 14px;
+    background: no-repeat center / contain url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='14' viewBox='0 0 10 14'><path d='M3 2 L8 7 L3 12' fill='none' stroke='%235d564b' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+    flex-shrink: 0;
     transition: transform var(--duration) var(--ease);
 }
 #finder-out details[open] summary::before {
     transform: rotate(90deg);
-    color: var(--orange);
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='14' viewBox='0 0 10 14'><path d='M3 2 L8 7 L3 12' fill='none' stroke='%23c45a2c' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/></svg>");
 }
 
 /* ===== Dev mode ===== */
