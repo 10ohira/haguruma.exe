@@ -951,66 +951,6 @@ const lan:{[key:string]:{[key:string]:string}} = {
         'ja':'NaN変更',
         'zh':'更改NaN',
     },
-    'change-ads-reward':{
-        'en':'Change Ads Reward',
-        'ko':'광고 보상 변경',
-        'ja':'広告報酬変更',
-        'zh':'更改广告奖励',
-    },
-    'resource-hack':{
-        'en':'Resource Hack',
-        'ko':'자원 핵',
-        'ja':'リソースハック',
-        'zh':'资源黑客',
-    },
-    'unlock-all-item': {
-        'en':'Unlock All Item',
-        'ko':'모든 템 해금',
-        'ja':'すべてのアイテムロック解除',
-        'zh':'解锁所有项目',
-    },
-    'unlock-all-char': {
-        'en':'Unlock All Character',
-        'ko':'모든 캐릭 해금',
-        'ja':'すべてのキャラクターロック解除',
-        'zh':'解锁所有角色',
-    },
-    'buy-clan-gold': {
-        'en':'Buy Clan Gold',
-        'ko':'클코 구매',
-        'ja':'クランゴールド購入',
-        'zh':'购买公会金币',
-    },
-    'get-daily-reward': {
-        'en':'Get Daily',
-        'ko':'일일 보상 획득',
-        'ja':'日日報酬獲得',
-        'zh':'获取每日奖励',
-    },
-    'buy-item': {
-        'en':'Buy',
-        'ko':'구매',
-        'ja':'購入',
-        'zh':'购买',
-    },
-    'repeat-count': {
-        'en':'Repeat Count',
-        'ko':'반복 횟수',
-        'ja':'繰り返し回数',
-        'zh':'重复次数',
-    },
-    'char-id': {
-        'en':'Character ID',
-        'ko':'캐릭터 ID',
-        'ja':'キャラクターID',
-        'zh':'角色ID',
-    },
-    'utilities': {
-        'en':'Utilities',
-        'ko':'유틸리티',
-        'ja':'ユーティリティ',
-        'zh':'工具',
-    },
     'user-id': {
         'en':'User ID',
         'ko':'유저 ID',
@@ -1022,78 +962,6 @@ const lan:{[key:string]:{[key:string]:string}} = {
         'ko':'킥',
         'ja':'キック',
         'zh':'踢出',
-    },
-    'change': {
-        'en':'Change',
-        'ko':'변경',
-        'ja':'変更',
-        'zh':'更改',
-    },
-    'vip-pass': {
-        'en':'VIP Pass',
-        'ko':'VIP 패스',
-        'ja':'VIPパス',
-        'zh':'VIP通行证',
-    },
-    'hero-pass': {
-        'en':'Hero Pass',
-        'ko':'히어로 패스',
-        'ja':'ヒーローパス',
-        'zh':'英雄通行证',
-    },
-    'purchase': {
-        'en':'Purchase',
-        'ko':'구매',
-        'ja':'購入',
-        'zh':'购买',
-    },
-    'create-clan': {
-        'en':'Create Clan',
-        'ko':'클랜 생성',
-        'ja':'クラン作成',
-        'zh':'创建公会',
-    },
-    'break-clan': {
-        'en':'Break Clan',
-        'ko':'클랜 해체',
-        'ja':'クラン解散',
-        'zh':'解散公会',
-    },
-    'equip-spyra': {
-        'en':'Equip Spyra',
-        'ko':'스피라 장착',
-        'ja':'スパイラ装備',
-        'zh':'装备斯皮拉',
-    },
-    'equip-mh9': {
-        'en':'Equip MH9',
-        'ko':'MH9 장착',
-        'ja':'MH9装備',
-        'zh':'装备MH9',
-    },
-    'clanname': {
-        'en':'Clan Name',
-        'ko':'클랜 이름',
-        'ja':'クラン名',
-        'zh':'公会名称',
-    },
-    'change-nickname': {
-        'en':'Change Nickname',
-        'ko':'닉네임 변경',
-        'ja':'ニックネーム変更',
-        'zh':'更改昵称',
-    },
-    'create': {
-        'en':'Create',
-        'ko':'생성',
-        'ja':'作成',
-        'zh':'创建',
-    },
-    'server-exploit': {
-        'en':'Exploit Server',
-        'ko':'서버 폭파',
-        'ja':'サーバーフォールト',
-        'zh':'服务器破坏',
     },
     'ctm':{
         'en':'Capture The Milk',
@@ -1534,7 +1402,6 @@ ipcRenderer.on('skillcode', (e, code:number) => {
 // })
 
 $_('change-NaN').addEventListener('click', () => {ipcRenderer.send('change-NaN');});
-$_('change-ads-reward').addEventListener('click', () => {ipcRenderer.send('change-ads-reward');});
 
 const blurCurrent = () => {(document.activeElement as HTMLInputElement).blur();}
 const changePosition = () => {ipcRenderer.send('pos', [parseFloat(xel.value || "0"), parseFloat(yel.value || "0"), parseFloat(zel.value || "0")]);}
@@ -1637,10 +1504,6 @@ $$_('.teleport-btn').forEach((el:HTMLButtonElement) => {
 // $_('scan-entity').addEventListener('click', () => {ipcRenderer.send('scan-entity');});
 // $_('clear-all').addEventListener('click', () => {ipcRenderer.send('clear-all');});
 
-$_('unlock-all-item').addEventListener('click', () => {ipcRenderer.send('unlock-all-item', parseInt($i('unlock-all-item-char-id').value) || 0);});
-$_('unlock-all-char').addEventListener('click', () => {ipcRenderer.send('unlock-all-char');});
-$_('get-daily-reward').addEventListener('click', () => {ipcRenderer.send('get-daily-reward', parseInt($i('get-daily-reward-repeat').value) || 1);});
-
 $_('kick-player').addEventListener('click', () => {ipcRenderer.send('kick-player', parseInt($i('kick-player-number').value) || 0);});
 
 // Slot kicker (FMatchKickUserSlot): per-slot buttons, all-enemy, and a loop.
@@ -1654,16 +1517,6 @@ $_('kick-loop-start')?.addEventListener('click', () => {
     ipcRenderer.send('kick-loop-start', slot, interval);
 });
 $_('kick-loop-stop')?.addEventListener('click', () => {ipcRenderer.send('kick-loop-stop');});
-$_('change-nickname').addEventListener('click', () => {ipcRenderer.send('change-nickname', $i('nickname-value').value || '');});
-$_('purchase-pass').addEventListener('click', () => {ipcRenderer.send('purchase-pass', parseInt($i('purchase-player-number').value) || 0, parseInt($i('purchase-item').value) || 1);});
-// $_('server-exploit').addEventListener('click', () => {ipcRenderer.send('server-exploit');});
-$_('create-clan').addEventListener('click', () => {ipcRenderer.send('create-clan', $i('clanname-value').value || '');});
-$_('break-clan').addEventListener('click', () => {ipcRenderer.send('break-clan');});
-$_('buy-clan-gold').addEventListener('click', () => {ipcRenderer.send('buy-clan-gold', parseInt($i('buy-clan-gold-repeat').value) || 1);});
-// equip
-$_('equip-spyra').addEventListener('click', () => {ipcRenderer.send('equip-item', parseInt($i('equip-char-number').value) || 1, 0, 24);});
-$_('equip-mh9').addEventListener('click', () => {ipcRenderer.send('equip-item', parseInt($i('equip-char-number').value) || 1, 1, 15);});
-
 updateExceptNumber();
 $_('except-number').addEventListener('change', updateExceptNumber);
 
