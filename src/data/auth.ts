@@ -2,7 +2,7 @@ import https from "https";
 import http from "http";
 import { URL } from "url";
 
-export const defaultWebUrl = "https://haguruma-web.vercel.app";
+export const defaultWebUrl = "https://haguruma.vercel.app";
 
 export type LoginResult = {
     ok: boolean;
