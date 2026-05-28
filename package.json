@@ -51,6 +51,7 @@
   "build": {
     "appId": "com.tenohira.haguruma",
     "productName": "はぐるま",
+    "compression": "maximum",
     "win": {
       "target": "nsis",
       "icon": "./public/favicon.ico"
@@ -81,7 +82,9 @@
         "from": "./bin",
         "to": "./bin",
         "filter": [
-          "**/*"
+          "adb/**",
+          "frida-server/frida-server-*-android-arm64",
+          "frida-server/frida-server-*-android-x86_64"
         ]
       }
     ],
