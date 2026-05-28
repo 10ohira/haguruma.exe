@@ -27,7 +27,7 @@
     "electron-log": "^5.4.0",
     "electron-updater": "^6.6.2",
     "express": "^5.1.0",
-    "frida": "^16.4.10",
+    "frida": "16.7.13",
     "node-global-key-listener": "^0.3.0",
     "socket.io": "^4.8.1"
   },
@@ -51,6 +51,7 @@
   "build": {
     "appId": "com.tenohira.haguruma",
     "productName": "はぐるま",
+    "compression": "maximum",
     "win": {
       "target": "nsis",
       "icon": "./public/favicon.ico"
@@ -81,7 +82,9 @@
         "from": "./bin",
         "to": "./bin",
         "filter": [
-          "**/*"
+          "adb/**",
+          "frida-server/frida-server-*-android-arm64",
+          "frida-server/frida-server-*-android-x86_64"
         ]
       }
     ],
