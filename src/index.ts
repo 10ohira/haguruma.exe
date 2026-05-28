@@ -11,7 +11,7 @@ import isDev from "electron-is-dev";
 import frida from "frida";
 import { existsSync, readFileSync } from "fs";
 import { adb, attachProcess, autoConnectAdb, checkFridaPerm, connectFrida, connectAdbDevice, executeProcess, fileExist, fileName, fridaServerBin, getArch, getUrl, pushFile, startFrida } from "./data/frida";
-import { loginPixel, defaultWebUrl } from "./data/auth";
+import { loginOperator, defaultWebUrl } from "./data/auth";
 import { exec } from "child_process";
 import { createServer as createPixelServer } from "./core/server";
 import type { ServerFacade } from "./core/server";
@@ -179,20 +179,20 @@ app.on("ready", async () => {
         sendPostUpdate();
     });
 
-    // pixel-code-web authentication
+    // haguruma-web authentication
     ipcMain.handle("auth:login", async (_e, payload: { id?: string; password?: string }) => {
         try {
             const id = (payload?.id || '').trim();
             const password = payload?.password || '';
             if(!id || !password) return { ok: false, error: 'ID / Password required' };
-            return await loginPixel(id, password);
+            return await loginOperator(id, password);
         } catch (err:any) {
             Logger.error("auth:login error", err);
             return { ok: false, error: err?.message || 'login error' };
         }
     });
     ipcMain.on("open-web", () => {
-        const url = process.env.PIXEL_WEB_URL || defaultWebUrl;
+        const url = process.env.HAGURUMA_WEB_URL || defaultWebUrl;
         shell.openExternal(url).catch(err => Logger.error("openExternal error", err));
     });
 
