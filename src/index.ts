@@ -22,6 +22,8 @@ import { Commander } from "./commander";
 
 keyboard.config.autoDelayMs = 0;
 
+const delay = (ms:number):Promise<void> => new Promise(resolve => setTimeout(resolve, ms));
+
 const process_name = 'com.gameparadiso.milkchoco';
 const frida_version = '16.4.10';
 const agentPath = isDev ? path.join(__dirname, './../public/scripts/', 'agent.js') : path.join(__dirname, './../../public/scripts/', 'agent.js');
@@ -248,13 +250,14 @@ app.on("ready", async () => {
         emitter.emit("cheats", id, _state);
     });
 
-    const _main = async (onip:boolean) => {
+    const _main = async (onip:boolean):Promise<boolean> => {
         try{
             if(onip){
                 state("adb", "pending", "Detecting BlueStacks emulator");
                 const resolved = await autoConnectAdb(serial);
                 if(resolved === ''){
-                    return state("adb", "error", "No emulator found. Enable ADB in BlueStacks Settings > Advanced");
+                    state("adb", "error", "No emulator found. Enable ADB in BlueStacks Settings > Advanced");
+                    return false;
                 }
                 serial = resolved;
                 adbId = resolved;
@@ -266,26 +269,110 @@ app.on("ready", async () => {
                     adbId = serial;
                 } else {
                     state("adb", "error", "Failed to get ip address");
+                    return false;
                 }
             }
-            if(adbId === '') return state("adb", "error", "Failed to connect to adb");
+            if(adbId === ''){
+                state("adb", "error", "Failed to connect to adb");
+                return false;
+            }
             state("adb", "active", `Connected to adb`);
+            return true;
         } catch(err){
             Logger.error("ADB error", err);
             state("adb", "error", "Failed to connect to adb");
+            return false;
         }
     }
-    ipcMain.on("connect-adb", async (e, serial:string, onip:boolean) => {
+
+    // Connect ADB (server + device). Returns whether a device is attached.
+    const connectAdbFlow = async (onip:boolean):Promise<boolean> => {
         state("adb", "pending", "Trying to connect to adb");
         try{
             await adb.startServer();
             state("adb", "pending", "Server started");
-            await _main(onip);
         } catch(err){
             Logger.error("ADB error", err);
             state("adb", "pending", "Server error");
-            await _main(onip);
         }
+        return _main(onip);
+    }
+
+    // Deploy (if missing) + launch frida-server on the device. Returns success.
+    const startServerFlow = async ():Promise<boolean> => {
+        if(adbId === ''){ state("server", "error", "ADB not connected"); return false; }
+        state("server", "pending", "Starting frida server");
+        try{
+            const arch = await getArch(adbId);
+            if(arch === ''){ state("server", "error", "Failed to get arch"); return false; }
+            let filename = await fileExist(adbId, frida_version);
+            if(filename === '') {
+                const bundled = fridaServerBin(frida_version, arch);
+                if(bundled === ''){ state("server", "error", "Cannot find frida server"); return false; }
+                const name = fileName(frida_version, arch);
+                state("server", "pending", "Deploying bundled frida server");
+                try {
+                    await pushFile(adbId, bundled, `/data/local/tmp/${name}`);
+                } catch(err) {
+                    Logger.error("Failed to deploy bundled frida server", err);
+                    state("server", "error", "Failed to deploy frida server");
+                    return false;
+                }
+                filename = name;
+            }
+            const perm = await checkFridaPerm(adbId, filename);
+            if(!perm){ state("server", "error", "Frida permissions denied"); return false; }
+            if(!await startFrida(adbId, filename, () => state("server", "error", "Frida server crashed"))) {
+                state("server", "error", "Failed to start frida server");
+                return false;
+            }
+            state("server", "active", "Frida server started");
+            return true;
+        } catch(e) {
+            Logger.error("Frida server error", e);
+            state("server", "error", "Failed to start frida server");
+            return false;
+        }
+    }
+
+    // Attach the frida Device for the current serial. Returns success.
+    const connectFridaFlow = async ():Promise<boolean> => {
+        if(adbId === ''){ state("frida", "error", "ADB not connected"); return false; }
+        state("frida", "pending", "Connecting to frida server");
+        let ok = false;
+        try{
+            await connectFrida(serial, () => state("frida", "error", "Frida server crashed"), (d) => {
+                if(!d){
+                    fridaDevice = null;
+                    state("frida", "error", "Failed to connect to frida server");
+                    return;
+                }
+                fridaDevice = d;
+                ok = true;
+                state("frida", "active", "Connected to frida server");
+            });
+        } catch(err){
+            Logger.error("Frida connect error", err);
+            state("frida", "error", "Failed to connect to frida server");
+            return false;
+        }
+        return ok;
+    }
+
+    ipcMain.on("connect-adb", async (e, _serial:string, onip:boolean) => {
+        await connectAdbFlow(onip);
+    });
+
+    // One-click: ADB → frida-server → frida device, in order, stopping on the
+    // first failure so the user can see exactly which step needs attention.
+    ipcMain.on("auto-connect", async (e) => {
+        state("frida", "pending", "Waiting");
+        if(!await connectAdbFlow(true)) return;
+        if(!await startServerFlow()) return;
+        // frida-server needs a brief moment to start listening before the
+        // device becomes enumerable; connectFridaFlow also retries internally.
+        await delay(1500);
+        await connectFridaFlow();
     });
 
     ipcMain.on("download-server", async (e) => {
@@ -311,53 +398,11 @@ app.on("ready", async () => {
     });
 
     ipcMain.on("start-server", async (e) => {
-        if(adbId === '') return state("server", "error", "ADB not connected");
-        state("server", "pending", "Starting frida server");
-        try{
-            const arch = await getArch(adbId);
-            if(arch === '') return state("server", "error", "Failed to get arch");
-            let filename = await fileExist(adbId, frida_version);
-            if(filename === '') {
-                const bundled = fridaServerBin(frida_version, arch);
-                if(bundled === '') return state("server", "error", "Cannot find frida server");
-                const name = fileName(frida_version, arch);
-                state("server", "pending", "Deploying bundled frida server");
-                try {
-                    await pushFile(adbId, bundled, `/data/local/tmp/${name}`);
-                } catch(err) {
-                    Logger.error("Failed to deploy bundled frida server", err);
-                    return state("server", "error", "Failed to deploy frida server");
-                }
-                filename = name;
-            }
-            const perm = await checkFridaPerm(adbId, filename);
-            if(!perm) return state("server", "error", "Frida permissions denied");
-            if(!await startFrida(adbId, filename, () => state("server", "error", "Frida server crashed"))) {
-                return state("server", "error", "Failed to start frida server");
-            }
-            state("server", "active", "Frida server started");
-        } catch(e) {
-            Logger.error("Frida server error", e);
-            state("server", "error", "Failed to start frida server");
-        }
+        await startServerFlow();
     });
 
     ipcMain.on("connect-frida", async (e) => {
-        if(adbId === '') return state("frida", "error", "ADB not connected");
-        state("frida", "pending", "Connecting to frida server");
-        try{
-            await connectFrida(serial, () => state("frida", "error", "Frida server crashed"), (d) => {
-                if(!d){
-                    fridaDevice = null;
-                    return state("frida", "error", "Failed to connect to frida server");
-                }
-                fridaDevice = d;
-                state("frida", "active", "Connected to frida server");
-            });
-        } catch(err){
-            Logger.error("Frida connect error", err);
-            state("frida", "error", "Failed to connect to frida server");
-        }
+        await connectFridaFlow();
     });
 
     ipcMain.on("get-cookie", async (e) => {

@@ -117,6 +117,18 @@ const lan:{[key:string]:{[key:string]:string}} = {
         'ja':'セッション',
         'zh':'会话',
     },
+    'auto-connect':{
+        'en':'Auto Connect (1-Click)',
+        'ko':'한 번에 연결',
+        'ja':'ワンクリック接続',
+        'zh':'一键连接',
+    },
+    'auto-connect-hint':{
+        'en':'Launch BlueStacks + MilkChoco first, then click. ADB → Server → Frida run automatically.',
+        'ko':'블루스택과 밀크초코를 먼저 켠 뒤 누르세요. ADB → 서버 → 프리다가 자동으로 연결됩니다.',
+        'ja':'先にBlueStacksとミルクチョコを起動してから押してください。ADB → サーバ → Fridaが自動で接続されます。',
+        'zh':'请先启动BlueStacks和巧克力牛奶，然后点击。ADB → 服务器 → Frida 将自动连接。',
+    },
     'connect-adb':{
         'en':'Connect ADB',
         'ko':'ADB 연결',
@@ -1341,6 +1353,7 @@ ipcRenderer.send('serial', $i('serial').value);
 $i('serial').addEventListener('change', () => {ipcRenderer.send('serial', $i('serial').value);});
 $i('cookie').addEventListener('change', () => {ipcRenderer.send('cookie', $i('cookie').value);});
 
+$_('auto-connect').addEventListener('click', () => {ipcRenderer.send('serial', $i('serial').value); ipcRenderer.send('auto-connect');});
 $_('connect-adb').addEventListener('click', () => {ipcRenderer.send('connect-adb', $i('serial').value, true);});
 $_('connect-serial').addEventListener('click', () => {ipcRenderer.send('connect-adb', $i('serial').value, false);});
 $_('start-server').addEventListener('click', () => {ipcRenderer.send('start-server');});
