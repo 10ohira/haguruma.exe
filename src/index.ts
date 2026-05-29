@@ -343,11 +343,21 @@ app.on("ready", async () => {
     });
 
     ipcMain.on("connect-frida", async (e) => {
+        if(adbId === '') return state("frida", "error", "ADB not connected");
         state("frida", "pending", "Connecting to frida server");
-        await connectFrida(serial, () => state("frida", "error", "Frida server crashed"), (d) => {
-            fridaDevice = d;
-            state("frida", "active", "Connected to frida server");
-        });
+        try{
+            await connectFrida(serial, () => state("frida", "error", "Frida server crashed"), (d) => {
+                if(!d){
+                    fridaDevice = null;
+                    return state("frida", "error", "Failed to connect to frida server");
+                }
+                fridaDevice = d;
+                state("frida", "active", "Connected to frida server");
+            });
+        } catch(err){
+            Logger.error("Frida connect error", err);
+            state("frida", "error", "Failed to connect to frida server");
+        }
     });
 
     ipcMain.on("get-cookie", async (e) => {

@@ -78,32 +78,68 @@ export const startFrida = async (id:string, filename:string, onCrashed:() => voi
     }
 }
 
-// Backward compatibility export (to be removed after refactor)
-export const connectFrida = async (serial:string, onCrashed:() => void, onConnected:(d:frida.Device) => void) => {
-    const devc = await frida.getDevice(serial);
-    if(devc) {
-        devc.processCrashed.connect(onCrashed);
-        onConnected(devc)
-        return;
+const delay = (ms:number):Promise<void> => new Promise(resolve => setTimeout(resolve, ms))
+
+// Per-attempt wait for frida.getDevice() and total connect attempts. frida-server
+// often needs a moment after start before the device is enumerable, so we wait
+// (timeout) and retry with backoff rather than failing on the first miss.
+const FRIDA_DEVICE_TIMEOUT = 5000
+const FRIDA_CONNECT_ATTEMPTS = 4
+
+// Resolve a usable frida Device for the given adb serial. Tries, in order:
+//   1. getDevice(serial) — frida enumerates adb-attached emulators with id === serial
+//   2. enumerateDevices() — exact id match, then any usb/remote device as fallback
+//   3. addRemoteDevice(serial) — frida-server exposed directly over TCP
+// Each strategy is bounded and retried, so a transient miss never hangs forever.
+const resolveFridaDevice = async (serial:string):Promise<frida.Device | null> => {
+    const deviceManager = frida.getDeviceManager()
+    for (let attempt = 1; attempt <= FRIDA_CONNECT_ATTEMPTS; attempt++) {
+        // 1. Wait up to FRIDA_DEVICE_TIMEOUT for the device to appear by id.
+        try {
+            const device = await frida.getDevice(serial, { timeout: FRIDA_DEVICE_TIMEOUT })
+            if (device) return device
+        } catch (err) {
+            Logger.warn(`[*] Frida getDevice attempt ${attempt} failed: ${err}`)
+        }
+        // 2. Fall back to scanning what's currently enumerated.
+        try {
+            const devices = await deviceManager.enumerateDevices()
+            const match = devices.find(d => d.id === serial)
+                ?? devices.find(d => d.type === frida.DeviceType.Usb)
+                ?? devices.find(d => d.type === frida.DeviceType.Remote)
+            if (match) return match
+        } catch (err) {
+            Logger.warn(`[*] Frida enumerateDevices attempt ${attempt} failed: ${err}`)
+        }
+        // 3. Last resort: connect to a frida-server listening over TCP.
+        try {
+            const remote = await deviceManager.addRemoteDevice(serial)
+            if (remote) return remote
+        } catch (err) {
+            Logger.warn(`[*] Frida addRemoteDevice attempt ${attempt} failed: ${err}`)
+        }
+        if (attempt < FRIDA_CONNECT_ATTEMPTS) await delay(800 * attempt)
     }
-    const deviceManager = frida.getDeviceManager();
-    const ds = await deviceManager.enumerateDevices()
-    if(ds.find(d => d.id === serial)) {
-        const fridaDevice = await frida.getUsbDevice();
-        fridaDevice.processCrashed.connect(onCrashed);
-        onConnected(fridaDevice)
-        return;
-    }
-    const tar = await deviceManager.addRemoteDevice(serial)
-    if (!tar) {
+    return null
+}
+
+export const connectFrida = async (
+    serial:string,
+    onCrashed:() => void,
+    onConnected:(d:frida.Device | null) => void
+) => {
+    const device = await resolveFridaDevice(serial)
+    if (!device) {
         Logger.error(`[*] Frida device not connected to ${serial}`)
         onConnected(null)
+        return
     }
-    deviceManager.added.connect(async () => {
-        const fridaDevice = await frida.getUsbDevice();
-        fridaDevice.processCrashed.connect(onCrashed);
-        onConnected(fridaDevice)
-    })
+    // Reconnects reuse the same Device object, so drop any prior handler before
+    // re-adding to avoid stacking duplicate crash callbacks.
+    try { device.processCrashed.disconnect(onCrashed) } catch (_) {}
+    device.processCrashed.connect(onCrashed)
+    Logger.info(`[*] Frida connected to ${serial} (${device.id})`)
+    onConnected(device)
 }
 
 // Backward compatibility export (to be removed after refactor)
