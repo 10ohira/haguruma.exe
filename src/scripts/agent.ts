@@ -336,19 +336,35 @@ function init(){
         fMatchKickUserSlot = makeNFunc(agentSyms['fmatch.kickUserSlot'], 'void', ['uchar']);
         attachNFunc(agentSyms['camera.getCameraUser'], {
             onLeave(retval) {
-                if(config['epos-number'] && config['epos-number'] != '0'){
-                    let ts = ptr(retval.toString());
-                    if(ts && !ts.isNull()){
-                        if(ts.readS32() === +config['epos-number']){
-                            epos = ts;
-                        } else if (
-                            epos.readS32() !== +config['epos-number']
-                            || epos.isNull()
-                            || epos.add(eposOffset['nickname']).readCString().trim() === ""
-                            || epos.add(eposOffset['zr1']).readFloat() !== 0
-                            || epos.add(eposOffset['zr2']).readFloat() !== 0
-                        ) epos = null;
-                    } else epos = null;
+                const ts = ptr(retval.toString());
+                // No camera user (menus / loading) — keep whatever epos we have.
+                if(!ts || ts.isNull()) return;
+                // GetCameraUserInformation returns the user the local camera is
+                // bound to, which in normal play is the local player itself.
+                // When an explicit epos-number is configured we lock onto that
+                // user so a kill-cam / spectate view of an enemy can't hijack
+                // epos; otherwise we trust the camera user directly (matching
+                // the dev inj.ts behaviour). Without this fallback epos stayed
+                // null whenever the box was left blank, silently killing every
+                // epos-dependent feature (teleport, kicker, electric, ...).
+                const wanted = config['epos-number'] && config['epos-number'] != '0'
+                    ? +config['epos-number'] : null;
+                if(wanted === null){
+                    epos = ts;
+                    return;
+                }
+                if(ts.readS32() === wanted){
+                    epos = ts;
+                } else if(
+                    // Keep the currently-locked epos only while it is still that
+                    // user and still a live player. Guards are ordered so we
+                    // never dereference a null/invalid pointer.
+                    !epos
+                    || epos.isNull()
+                    || epos.readS32() !== wanted
+                    || epos.add(eposOffset['nickname']).readCString().trim() === ""
+                ){
+                    epos = null;
                 }
             },
         });
@@ -458,14 +474,14 @@ function init(){
                     //     jit = _jt[0].base;
                     //     jtRange = _jt[0].size;
                     // }
-                    // if(!xa || !an) return recv(api);
-                    // if(!isArm && !jit) return recv(api);
+                    // if(!xa || !an) return;
+                    // if(!isArm && !jit) return;
                     // send(['Address.init', xa.toString(), an.toString(), jit.toString()])
                     // _libMyGame = Process.findModuleByName(libName);
                     // send(['Address.init', _libMyGame ? _libMyGame.base.toString() : 'null']);
                 } else if(name === 'cheats'){
-                    // if(!an || !xa) return recv(api);
-                    if(!_libMyGame) return recv(api);
+                    // if(!an || !xa) return;
+                    if(!_libMyGame) return;
                     cheats[args[0]] = args[1];
                     // Enable/Disable values
                     switch(args[0]){
@@ -528,24 +544,24 @@ function init(){
                         });
                     }
                     if(key === keybinds['electric'] && action === 'DOWN' && cheats['electric']){
-                        if(!epos) return recv(api);
-                        if(epos.isNull()) return recv(api);
+                        if(!epos) return;
+                        if(epos.isNull()) return;
                         const mynum = epos.add(eposOffset['number']).readS32();
                         getFocusedEntity().forEach(entity => {
                             elec(entity, mynum, mynum);
                         });
                     }
                     if(key === keybinds['mago'] && action === 'DOWN' && cheats['mago']){
-                        if(!epos) return recv(api);
-                        if(epos.isNull()) return recv(api);
+                        if(!epos) return;
+                        if(epos.isNull()) return;
                         const mynum = epos.add(eposOffset['number']).readS32();
                         getFocusedEntity().forEach(entity => {
                             mago(mynum, entity.add(eposOffset['number']).readS32());
                         });
                     }
                     if(key === keybinds['infinite-jump'] && action === 'DOWN' && cheats['infinite-jump']){
-                        if(!epos) return recv(api);
-                        if(epos.isNull()) return recv(api);
+                        if(!epos) return;
+                        if(epos.isNull()) return;
                         const y = epos.add(eposOffset['y']).readFloat();
                         epos.add(eposOffset['state']).writeS32(isWalking(epos) ? 33 : 32);
                         epos.add(eposOffset['dy']).writeFloat(-0.01);
@@ -573,11 +589,11 @@ function init(){
                     beNaN();
                 } else if(name === 'kick-player'){ purchaseT(+args[0] || 0, 0);
                 } else if(name === 'kick-by-slot'){
-                    if(!fMatchKickUserSlot) return recv(api);
+                    if(!fMatchKickUserSlot) return;
                     try { fMatchKickUserSlot(+args[0] || 0); } catch(_){}
                 } else if(name === 'kick-all-enemy'){
-                    if(!fMatchKickUserSlot) return recv(api);
-                    if(!epos || epos.isNull()) return recv(api);
+                    if(!fMatchKickUserSlot) return;
+                    if(!epos || epos.isNull()) return;
                     const myteam = epos.add(eposOffset['slot']).readU8() % 2;
                     [...entityList].forEach(p => {
                         try{
@@ -600,8 +616,8 @@ function init(){
                 // } else if(name === 'scan-epos'){
                 //     epos = scanEpos();
                 // } else if(name === 'scan-entity'){
-                //     if(!epos) return recv(api);
-                //     if(epos.isNull()) return recv(api);
+                //     if(!epos) return;
+                //     if(epos.isNull()) return;
                 //     entityList = scanEntityList(epos);
                 // } else if(name === 'clear-all'){
                 //     clearAll();
@@ -1131,6 +1147,11 @@ function pos(nums:number[]){
     const eposPointer = epos;
     if(!eposPointer) return;
     if(eposPointer.isNull()) return;
+    // Force "ground walk" before writing the position. A single coordinate
+    // write while idle/airborne is reverted by the movement system on the next
+    // frame, which is why the milk-capture teleport appeared to do nothing.
+    // The reference ctm* routines set this same state for exactly this reason.
+    eposPointer.add(eposOffset['state']).writeS32(1);
     eposPointer.add(eposOffset['x']).writeFloat(nums[0]);
     eposPointer.add(eposOffset['y']).writeFloat(nums[1]);
     eposPointer.add(eposOffset['z']).writeFloat(nums[2]);
