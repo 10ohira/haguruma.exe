@@ -181,7 +181,7 @@ app.on("ready", async () => {
         sendPostUpdate();
     });
 
-    // pixel-code-web authentication
+    // haguruma.web authentication (operator ID + password)
     ipcMain.handle("auth:login", async (_e, payload: { id?: string; password?: string }) => {
         try {
             const id = (payload?.id || '').trim();
@@ -194,7 +194,7 @@ app.on("ready", async () => {
         }
     });
     ipcMain.on("open-web", () => {
-        const url = process.env.PIXEL_WEB_URL || defaultWebUrl;
+        const url = process.env.HAGURUMA_WEB_URL || process.env.PIXEL_WEB_URL || defaultWebUrl;
         shell.openExternal(url).catch(err => Logger.error("openExternal error", err));
     });
 

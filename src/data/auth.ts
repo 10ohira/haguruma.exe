@@ -2,22 +2,24 @@ import https from "https";
 import http from "http";
 import { URL } from "url";
 
-export const defaultWebUrl = "https://pixel-code-web.vercel.app";
+export const defaultWebUrl = "https://haguruma.vercel.app";
 
 export type LoginResult = {
     ok: boolean;
     error?: string;
-    pixelId?: string;
+    operatorId?: string;
     admin?: boolean;
 };
 
 export async function loginPixel(id: string, password: string): Promise<LoginResult> {
-    const base = process.env.PIXEL_WEB_URL || defaultWebUrl;
+    // HAGURUMA_WEB_URL is the new name; PIXEL_WEB_URL kept as a fallback so
+    // existing setups don't break after the pixel-code → haguruma rename.
+    const base = process.env.HAGURUMA_WEB_URL || process.env.PIXEL_WEB_URL || defaultWebUrl;
     let url: URL;
     try {
-        url = new URL("/api/pixel/login", base);
+        url = new URL("/api/haguruma/login", base);
     } catch {
-        return { ok: false, error: `invalid PIXEL_WEB_URL: ${base}` };
+        return { ok: false, error: `invalid HAGURUMA_WEB_URL: ${base}` };
     }
     const body = JSON.stringify({ id, password });
     const transport = url.protocol === "http:" ? http : https;
@@ -41,7 +43,7 @@ export async function loginPixel(id: string, password: string): Promise<LoginRes
                     try { data = text ? JSON.parse(text) : {}; } catch { /* ignore */ }
                     const code = res.statusCode || 0;
                     if (code >= 200 && code < 300 && data?.ok) {
-                        resolve({ ok: true, pixelId: data.pixelId, admin: !!data.admin });
+                        resolve({ ok: true, operatorId: data.operatorId, admin: !!data.admin });
                     } else {
                         resolve({ ok: false, error: data?.error || `HTTP ${code || "error"}` });
                     }
