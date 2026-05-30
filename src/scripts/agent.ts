@@ -385,7 +385,7 @@ function init(){
                                         let slot = pt.add(eposOffset['slot']).readU8() % 2
                                         if(n > 0 && myslot != slot){
                                             if(!(config['auto-kick-ignore'] && excepts.includes(n))){
-                                                purchaseT(n, 0);
+                                                if(purchaseT) purchaseT(n, 0);
                                             }
                                         }
                                     }
@@ -539,7 +539,7 @@ function init(){
                     if(key === keybinds['kicker'] && action === 'DOWN'){
                         const numbers = getFocusedEntity().map(entity => entity.add(eposOffset['number']).readS32())
                         .filter(number => number > 0);
-                        numbers.forEach(number => {
+                        if(purchaseT) numbers.forEach(number => {
                             purchaseT(number, 0);
                         });
                     }
@@ -587,7 +587,7 @@ function init(){
                     skillcode(+args[0]);
                 } else if(name === 'change-NaN'){
                     beNaN();
-                } else if(name === 'kick-player'){ purchaseT(+args[0] || 0, 0);
+                } else if(name === 'kick-player'){ if(purchaseT) purchaseT(+args[0] || 0, 0);
                 } else if(name === 'kick-by-slot'){
                     if(!fMatchKickUserSlot) return;
                     try { fMatchKickUserSlot(+args[0] || 0); } catch(_){}
