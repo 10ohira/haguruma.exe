@@ -1396,15 +1396,15 @@ function calcESP(vec3:{x:number; y:number; z:number;}, cam3:{x:number; y:number;
     let rotatedY:number = - dy * Math.cos(-pitch) + rotatedZ * Math.sin(-pitch);
     rotatedZ = rotatedZ * Math.cos(-pitch) + dy * Math.sin(-pitch);
     if(rotatedZ >= 0) return null;
-    // The yaw rotation above is applied about (yaw + PI), which flips both the
-    // depth (so points in front yield rotatedZ < 0, used for culling) *and* the
-    // lateral axis. The depth flip is intended; the lateral flip is not, so a
-    // target to the camera's right (+x in the game's left-handed space, as the
-    // working aimbot's atan2(dx, dz) convention confirms) was mirrored to the
-    // left of the overlay. Drop the extra negation on x so screen-right maps to
-    // screen-right. (Vertical keeps its negation: world-up -> smaller canvas y.)
+    // Right-handed (OpenGL / Cocos2d-x) projection. The yaw rotation about
+    // (yaw + PI) makes rotatedX = d . screen-right and rotatedZ = -depth, where
+    // screen-right = forward x up = (-cos yaw, 0, sin yaw). So world +x maps to
+    // the LEFT of the screen when facing +z, which is correct for this engine
+    // (Cocos2d-x is right-handed; do NOT flip x as you would for Unity). The
+    // leading negations turn -depth back into a forward divide and put world-up
+    // at a smaller canvas y.
     return {
-        x:(rotatedX / rotatedZ)*(90/fov[0]),
+        x:-(rotatedX / rotatedZ)*(90/fov[0]),
         y:-(rotatedY / rotatedZ)*(90/fov[1])
     };
 }
