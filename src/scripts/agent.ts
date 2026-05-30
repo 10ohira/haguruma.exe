@@ -1311,11 +1311,17 @@ function aimbycircle(eposPointer:NativePointer, delta:number){
     const yaw = cambase.add(anOffset['yaw']).readFloat();
     const pitch = cambase.add(anOffset['pitch']).readFloat() + pitchOffset;
 
-    // Screen-space radius in normalized coordinates is resolved on the renderer
-    // (which knows window size). Here we approximate against a reference 1080p
-    // half-width so the on-screen circle and hit-test agree within ~few px on
-    // typical displays. The renderer re-uses the same px value verbatim.
-    const refHalfWidth = 960;
+    // The renderer draws the aim circle at `radiusPx` canvas pixels around the
+    // screen centre, so project each entity into that exact pixel space. proj.x
+    // is normalised to the viewport half-width and proj.y to the half-height,
+    // therefore each axis must be scaled by its own dimension. Scaling both by a
+    // single reference half-width (the previous behaviour) squashed the lock
+    // zone vertically and broke the match on any non-1080p overlay, so the
+    // circle the user saw never agreed with where targets were actually caught.
+    // The live viewport size is plumbed in from the overlay window; fall back to
+    // 1080p until the first resize arrives.
+    const halfW = (+config['viewport-w'] || 1920) / 2;
+    const halfH = (+config['viewport-h'] || 1080) / 2;
 
     const candidates = getFilteredEntityList(ignoreExcept)
     .filter(entity => ignoreTeam ? !isTeam(eposPointer, entity) : true)
@@ -1326,8 +1332,8 @@ function aimbycircle(eposPointer:NativePointer, delta:number){
         const ez = entity.add(eposOffset["z"]).readFloat();
         const proj = calcESP({x:ex, y:ey, z:ez}, {x:camX, y:camY, z:camZ}, yaw, pitch, camFov);
         if(!proj) return null;
-        const pxX = proj.x * refHalfWidth;
-        const pxY = proj.y * refHalfWidth;
+        const pxX = proj.x * halfW;
+        const pxY = proj.y * halfH;
         const screenDist = Math.sqrt(pxX*pxX + pxY*pxY);
         if(screenDist > radiusPx) return null;
         const dx = ex - camX;
@@ -1390,8 +1396,15 @@ function calcESP(vec3:{x:number; y:number; z:number;}, cam3:{x:number; y:number;
     let rotatedY:number = - dy * Math.cos(-pitch) + rotatedZ * Math.sin(-pitch);
     rotatedZ = rotatedZ * Math.cos(-pitch) + dy * Math.sin(-pitch);
     if(rotatedZ >= 0) return null;
+    // The yaw rotation above is applied about (yaw + PI), which flips both the
+    // depth (so points in front yield rotatedZ < 0, used for culling) *and* the
+    // lateral axis. The depth flip is intended; the lateral flip is not, so a
+    // target to the camera's right (+x in the game's left-handed space, as the
+    // working aimbot's atan2(dx, dz) convention confirms) was mirrored to the
+    // left of the overlay. Drop the extra negation on x so screen-right maps to
+    // screen-right. (Vertical keeps its negation: world-up -> smaller canvas y.)
     return {
-        x:-(rotatedX / rotatedZ)*(90/fov[0]),
+        x:(rotatedX / rotatedZ)*(90/fov[0]),
         y:-(rotatedY / rotatedZ)*(90/fov[1])
     };
 }

@@ -222,7 +222,12 @@ app.on("ready", async () => {
         layout.setIgnoreMouseEvents(bool);
     });
     ipcMain.on("resize-layout", (e) => {
-        main.webContents.send("resize-layout", layout.getBounds());
+        const bounds = layout.getBounds();
+        main.webContents.send("resize-layout", bounds);
+        // Forward the live overlay size to the agent so the aim-by-circle
+        // hit-test projects into the same pixel space the renderer draws in.
+        emitter.emit("config", "viewport-w", bounds.width);
+        emitter.emit("config", "viewport-h", bounds.height);
     });
 
     // initialize
@@ -483,6 +488,11 @@ app.on("ready", async () => {
                                         state("session", "succeed", `Module Initialized`);
                                         main.webContents.send("init", true);
                                         script.post(['init', cheats, keybinds, config, wpdata]);
+                                        // Seed the agent with the current overlay size so the
+                                        // aim-by-circle hit-test is correct before the first resize.
+                                        const _lb = layout.getBounds();
+                                        script.post(['config', 'viewport-w', _lb.width]);
+                                        script.post(['config', 'viewport-h', _lb.height]);
                                     } else emitter.emit(channel, ...args);
                                 }
                             },
