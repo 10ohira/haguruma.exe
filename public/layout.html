@@ -8,6 +8,19 @@
     <style>
         html, body {
             background: transparent;
+            /* The overlay canvas must cover the window exactly: any body margin
+               or inline-canvas whitespace shifts the canvas origin, so the
+               canvas centre (used for the aim circle) and projected ESP boxes
+               end up a few px off the real screen centre. */
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+        #canvas {
+            display: block;
+            position: fixed;
+            top: 0;
+            left: 0;
         }
     </style>
 </head>
