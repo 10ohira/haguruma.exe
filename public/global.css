@@ -1,36 +1,40 @@
-/* Web fonts (IBM Plex Sans/Mono, Noto Sans JP) and Font Awesome are loaded
-   via non-blocking <link> tags in main.html with print-then-all swap. */
+/* Web fonts (JetBrains Mono, IBM Plex Mono, Share Tech Mono) are loaded via
+   a non-blocking <link> tag in main.html with print-then-all swap. */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 /* ============================================================
-   はぐるま — WORKSHOP design system
-   Light-theme industrial drafting language.
-   Charcoal on cream, hairline borders, square corners,
-   IBM Plex type, gear motifs.
+   anonymous.exe — TERMINAL design system
+   Monochrome white/black command-line language.
+   Pure black ink on white paper, hairline borders, square
+   corners, monospaced type, scanline/terminal motifs.
+   Color is reserved strictly for machine state:
+       blue = active   amber = working   green = done   red = error
    ============================================================ */
 
 :root {
-    --bg-base:   #f4ede0;
-    --bg-1:      #faf4e7;
-    --bg-2:      #fbf6ec;
-    --bg-3:      #f0e6d2;
-    --bg-4:      #e6dac3;
+    color-scheme: light;
 
-    --surface:        #fbf6ec;
-    --surface-hover:  #f5ecd8;
-    --surface-active: #ecdfc4;
+    --bg-base:   #ffffff;
+    --bg-1:      #ffffff;
+    --bg-2:      #ffffff;
+    --bg-3:      #f2f2f2;
+    --bg-4:      #e6e6e6;
 
-    --ink-1:     #1f1a14;
-    --ink-2:     #3a3329;
-    --ink-3:     #5d564b;
-    --ink-4:     #8a8275;
+    --surface:        #ffffff;
+    --surface-hover:  #f2f2f2;
+    --surface-active: #e6e6e6;
 
-    --border:        #1f1a14;
-    --border-soft:   rgba(31, 26, 20, 0.18);
-    --border-line:   rgba(31, 26, 20, 0.32);
-    --border-focus:  #c45a2c;
+    --ink-1:     #000000;
+    --ink-2:     #141414;
+    --ink-3:     #4d4d4d;
+    --ink-4:     #8a8a8a;
+
+    --border:        #000000;
+    --border-soft:   rgba(0, 0, 0, 0.16);
+    --border-line:   rgba(0, 0, 0, 0.30);
+    --border-focus:  #000000;
 
     /* legacy alias (kept so any selector that referenced text-* still works) */
     --text-1: var(--ink-1);
@@ -38,23 +42,35 @@
     --text-3: var(--ink-3);
     --text-4: var(--ink-4);
 
-    --orange:      #c45a2c;
-    --orange-deep: #9c3f17;
-    --gold:        #e8a838;
-    --steel:       #3a6fbf;
-    --moss:        #5a7242;
+    /* the old warm accents are remapped to ink so every legacy rule that
+       referenced them renders as pure black/white — no stray color */
+    --orange:      #000000;
+    --orange-deep: #141414;
+    --gold:        #000000;
+    --steel:       #000000;
+    --moss:        #000000;
 
-    --accent:      #c45a2c;
-    --accent-2:    #e8a838;
-    --accent-3:    #3a6fbf;
-    --accent-soft: rgba(196, 90, 44, 0.10);
-    --accent-glow: rgba(196, 90, 44, 0.32);
+    --accent:      #000000;
+    --accent-2:    #000000;
+    --accent-3:    #000000;
+    --accent-soft: rgba(0, 0, 0, 0.06);
+    --accent-glow: rgba(0, 0, 0, 0.18);
 
-    --success: #5a7242;
-    --warning: #e8a838;
-    --error:   #b14638;
+    /* functional state colors — the ONLY hues allowed in the UI */
+    --state-active:  #2f6fed; /* blue  — connected / running   */
+    --state-pending: #e0a400; /* amber — working / loading      */
+    --state-success: #1f9d55; /* green — done / complete        */
+    --state-error:   #e5484d; /* red   — failure                */
 
-    /* sharp edges — drafting feel */
+    --success: var(--state-success);
+    --warning: var(--state-pending);
+    --error:   var(--state-error);
+
+    /* terminal grid */
+    --grid-fine: rgba(0, 0, 0, 0.035);
+    --grid-bold: rgba(0, 0, 0, 0.075);
+
+    /* sharp edges — terminal feel */
     --radius-xs: 0;
     --radius-sm: 0;
     --radius:    0;
@@ -67,6 +83,54 @@
     --duration-slow: 280ms;
     --ease:     cubic-bezier(0.4, 0, 0.2, 1);
     --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
+
+    --mono: 'JetBrains Mono', 'IBM Plex Mono', 'Share Tech Mono', ui-monospace, 'SFMono-Regular', 'Cascadia Code', Consolas, monospace;
+    --sans: 'JetBrains Mono', 'IBM Plex Mono', ui-monospace, Consolas, monospace;
+}
+
+/* ===== Dark terminal variant ===== */
+:root[data-theme="dark"] {
+    color-scheme: dark;
+
+    --bg-base:   #000000;
+    --bg-1:      #060606;
+    --bg-2:      #0b0b0b;
+    --bg-3:      #141414;
+    --bg-4:      #1f1f1f;
+
+    --surface:        #0b0b0b;
+    --surface-hover:  #161616;
+    --surface-active: #202020;
+
+    --ink-1:     #ffffff;
+    --ink-2:     #ededed;
+    --ink-3:     #a3a3a3;
+    --ink-4:     #6b6b6b;
+
+    --border:        #ffffff;
+    --border-soft:   rgba(255, 255, 255, 0.18);
+    --border-line:   rgba(255, 255, 255, 0.30);
+    --border-focus:  #ffffff;
+
+    --orange:      #ffffff;
+    --orange-deep: #d4d4d4;
+    --gold:        #ffffff;
+    --steel:       #ffffff;
+    --moss:        #ffffff;
+
+    --accent:      #ffffff;
+    --accent-2:    #ffffff;
+    --accent-3:    #ffffff;
+    --accent-soft: rgba(255, 255, 255, 0.08);
+    --accent-glow: rgba(255, 255, 255, 0.22);
+
+    --state-active:  #4d8bff;
+    --state-pending: #f5b301;
+    --state-success: #2ecc71;
+    --state-error:   #ff5c60;
+
+    --grid-fine: rgba(255, 255, 255, 0.045);
+    --grid-bold: rgba(255, 255, 255, 0.09);
 }
 
 * {
@@ -81,19 +145,19 @@
 }
 
 html, body {
-    font-family: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-family: var(--sans);
     font-weight: 500;
     font-size: 13px;
     line-height: 1.45;
     letter-spacing: -0.005em;
     color: var(--ink-1);
     background: var(--bg-base);
-    /* drafting grid — fully static (cheap repeating linear-gradients, no SVG noise) */
+    /* terminal grid — fully static (cheap repeating linear-gradients, no SVG noise) */
     background-image:
-        linear-gradient(to right,  rgba(31, 26, 20, 0.045) 1px, transparent 1px),
-        linear-gradient(to bottom, rgba(31, 26, 20, 0.045) 1px, transparent 1px),
-        linear-gradient(to right,  rgba(31, 26, 20, 0.10)  1px, transparent 1px),
-        linear-gradient(to bottom, rgba(31, 26, 20, 0.10)  1px, transparent 1px);
+        linear-gradient(to right,  var(--grid-fine) 1px, transparent 1px),
+        linear-gradient(to bottom, var(--grid-fine) 1px, transparent 1px),
+        linear-gradient(to right,  var(--grid-bold) 1px, transparent 1px),
+        linear-gradient(to bottom, var(--grid-bold) 1px, transparent 1px);
     background-size: 24px 24px, 24px 24px, 120px 120px, 120px 120px;
     background-attachment: fixed;
     width: 100vw;
@@ -140,8 +204,12 @@ body::after {
     width: 520px;
     height: 290px;
     background: url('./gif-watermark.gif') no-repeat right bottom / contain;
-    opacity: 0.08;
+    opacity: 0.07;
     filter: grayscale(1) contrast(1.2);
+}
+:root[data-theme="dark"] .bg-watermark {
+    opacity: 0.10;
+    filter: grayscale(1) contrast(1.2) invert(1);
 }
 
 .hide {
@@ -174,7 +242,7 @@ canvas {
     cursor: pointer;
     appearance: none;
     transition: background-color var(--duration) var(--ease);
-    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 10 10'><path d='M2 4l3 3 3-3' stroke='%231f1a14' stroke-width='1.4' fill='none' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 10 10'><path d='M2 4l3 3 3-3' stroke='%23000000' stroke-width='1.4' fill='none' stroke-linecap='round' stroke-linejoin='round'/></svg>");
     background-repeat: no-repeat;
     background-position: right 10px center;
 }
@@ -211,7 +279,7 @@ canvas {
     content: '';
     width: 10px;
     height: 14px;
-    background: no-repeat center / contain url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='14' viewBox='0 0 10 14'><path d='M7 2 L2 7 L7 12' fill='none' stroke='%231f1a14' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+    background: no-repeat center / contain url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='14' viewBox='0 0 10 14'><path d='M7 2 L2 7 L7 12' fill='none' stroke='%23000000' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/></svg>");
 }
 
 /* ===== Brand badge (in-app top center) ===== */
@@ -234,24 +302,28 @@ canvas {
 body:has(#app:not(.hide)) #brand { display: flex; }
 
 #brand .dot {
-    width: 12px;
-    height: 12px;
-    background: url('./icon.svg') no-repeat center / contain;
-    filter: brightness(1.1);
+    width: 16px;
+    height: 16px;
+    background: url('./anonymous-logo.png') no-repeat center / contain;
+    /* badge is black in light mode -> show the mark white */
+    filter: invert(1);
 }
+:root[data-theme="dark"] #brand .dot { filter: none; }
 #brand .name {
-    font-family: 'Noto Sans JP', 'IBM Plex Sans', sans-serif;
+    font-family: var(--mono);
     font-size: 11px;
     font-weight: 700;
-    letter-spacing: 0.18em;
+    letter-spacing: 0.22em;
+    text-transform: lowercase;
     color: var(--bg-base);
 }
 #brand .ver {
     font-size: 9.5px;
     font-weight: 500;
     letter-spacing: 0.1em;
-    color: var(--gold);
-    font-family: 'IBM Plex Mono', monospace;
+    color: var(--bg-base);
+    opacity: 0.65;
+    font-family: var(--mono);
 }
 
 /* ===== Page ===== */
@@ -272,143 +344,6 @@ body:has(#app:not(.hide)) #brand { display: flex; }
     to   { opacity: 1; transform: translateY(0); }
 }
 
-/* ===== Login ===== */
-#login {
-    user-select: none;
-    gap: 14px;
-    padding: 24px 24px 32px;
-}
-
-#login .hero {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 6px;
-    position: relative;
-    margin-bottom: 6px;
-}
-
-/* hero gear GIF (IMG_1530) renders as the first hero element.
-   Trimmed to the rotating-gear range (10 frames, no morph) and the white
-   frame is baked transparent so it composites cleanly on any bg. */
-#login .hero::before {
-    content: '';
-    display: block;
-    width: 190px;
-    height: 142px;
-    background: url('./gif-hero.gif') no-repeat center / contain;
-    margin-bottom: -4px;
-}
-
-/* original <img> tag in #login is replaced by the hero gif above */
-#login img { display: none !important; }
-
-#login .wordmark {
-    font-family: 'Noto Sans JP', 'IBM Plex Sans', sans-serif;
-    font-size: 30px;
-    font-weight: 700;
-    letter-spacing: 0.32em;
-    padding-left: 0.32em;
-    line-height: 1;
-    color: var(--ink-1);
-    margin-top: 8px;
-}
-
-#login .meta {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 10px;
-    font-weight: 600;
-    letter-spacing: 0.22em;
-    text-transform: uppercase;
-    color: var(--ink-3);
-}
-#login .meta .sep {
-    width: 3px;
-    height: 3px;
-    background: var(--ink-4);
-}
-
-#login > div.form {
-    width: 100%;
-    max-width: 320px;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    position: relative;
-}
-
-/* Workshop accent: 3px bar to the left of the form column */
-#login > div.form::before {
-    content: '';
-    position: absolute;
-    left: -16px;
-    top: 4px;
-    bottom: 4px;
-    width: 3px;
-    background: var(--orange);
-}
-
-#updp {
-    width: 100%;
-    text-align: center;
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 10.5px;
-    color: var(--ink-3);
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    padding: 6px 0;
-}
-/* loading spinner GIF (IMG_1532) sits beside the updater text */
-#updp:not(.hide)::before {
-    content: '';
-    display: inline-block;
-    width: 22px;
-    height: 22px;
-    vertical-align: middle;
-    margin-right: 10px;
-    background: url('./gif-spinner.gif') no-repeat center / contain;
-}
-
-#updbar {
-    height: 4px !important;
-    background: var(--bg-3) !important;
-    border: 1.2px solid var(--ink-1) !important;
-    overflow: hidden;
-    border-radius: 0 !important;
-}
-#updprg {
-    height: 100% !important;
-    background: var(--orange) !important;
-    border-radius: 0 !important;
-}
-
-#logform { gap: 10px !important; }
-
-#logerr {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 11px;
-    color: var(--error);
-    text-align: center;
-    min-height: 14px;
-    letter-spacing: 0.04em;
-}
-
-#loglink {
-    color: var(--orange);
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 11px;
-    text-decoration: none;
-    text-align: center;
-    letter-spacing: 0.06em;
-    transition: color var(--duration) var(--ease);
-    margin-top: 4px;
-    font-weight: 600;
-}
-#loglink::before { content: '→ '; }
-#loglink:hover { color: var(--orange-deep); text-decoration: underline; text-underline-offset: 3px; }
 
 /* ===== Inputs / Selects / Textareas ===== */
 button, input, select, textarea {
@@ -438,9 +373,9 @@ input::placeholder, textarea::placeholder {
 }
 input:hover, select:hover, textarea:hover { background: var(--bg-1); }
 input:focus, select:focus, textarea:focus {
-    background: #ffffff;
-    border-color: var(--orange);
-    box-shadow: inset 0 0 0 1px var(--orange);
+    background: var(--bg-1);
+    border-color: var(--ink-1);
+    box-shadow: inset 0 0 0 1px var(--ink-1);
 }
 
 /* select arrow */
@@ -449,7 +384,7 @@ select {
     padding-right: 28px;
     cursor: pointer;
     font-family: 'IBM Plex Sans', sans-serif;
-    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 10 10'><path d='M2 4l3 3 3-3' stroke='%231f1a14' stroke-width='1.4' fill='none' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 10 10'><path d='M2 4l3 3 3-3' stroke='%23000000' stroke-width='1.4' fill='none' stroke-linecap='round' stroke-linejoin='round'/></svg>");
     background-repeat: no-repeat;
     background-position: right 10px center;
 }
@@ -525,32 +460,6 @@ button:disabled, input:disabled, select:disabled, textarea:disabled {
     opacity: 0.45;
     cursor: not-allowed;
 }
-
-/* primary login button */
-#logbtn {
-    padding: 12px 18px;
-    background: var(--ink-1);
-    border: 1.2px solid var(--ink-1);
-    color: var(--bg-base);
-    font-family: 'IBM Plex Sans', sans-serif;
-    font-weight: 700;
-    letter-spacing: 0.32em;
-    text-transform: uppercase;
-    font-size: 11.5px;
-    margin-top: 4px;
-}
-#logbtn::after {
-    content: ' →';
-    margin-left: 6px;
-    color: var(--gold);
-}
-#logbtn:hover {
-    background: var(--orange);
-    border-color: var(--orange);
-    color: #fff;
-}
-#logbtn:hover::after { color: #fff; }
-#logbtn:active { background: var(--orange-deep); }
 
 /* ===== Scrollbar — minimal, square ===== */
 ::-webkit-scrollbar {
@@ -656,19 +565,20 @@ button:disabled, input:disabled, select:disabled, textarea:disabled {
     display: inline-flex;
     width: 22px;
     height: 22px;
-    background-color: var(--ink-1);
+    background-color: transparent;
     background-repeat: no-repeat;
     background-position: center;
-    background-size: 14px 14px;
+    background-size: 16px 16px;
     flex-shrink: 0;
-    transition: background-color var(--duration) var(--ease);
+    opacity: 0.9;
+    transition: opacity var(--duration) var(--ease);
 }
 #selector .selector::after {
     content: '';
     margin-left: auto;
     width: 10px;
     height: 14px;
-    background: no-repeat center / contain url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='14' viewBox='0 0 10 14'><path d='M3 2 L8 7 L3 12' fill='none' stroke='%238a8275' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+    background: no-repeat center / contain url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='14' viewBox='0 0 10 14'><path d='M3 2 L8 7 L3 12' fill='none' stroke='%23000000' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/></svg>");
     transition: transform var(--duration) var(--ease), background-image var(--duration) var(--ease);
 }
 #selector .selector:hover {
@@ -676,24 +586,37 @@ button:disabled, input:disabled, select:disabled, textarea:disabled {
     background: var(--bg-1);
 }
 #selector .selector:hover::before {
-    background-color: var(--orange);
+    opacity: 1;
+}
+/* dark terminal: black glyphs flip to white */
+:root[data-theme="dark"] #selector .selector::before,
+:root[data-theme="dark"] #selector .selector::after,
+:root[data-theme="dark"] #back::before,
+:root[data-theme="dark"] #app > section > details > summary:not(.no)::before,
+:root[data-theme="dark"] #finder-out details summary::before {
+    filter: invert(1);
+}
+/* opaque-bg controls need their arrow redrawn white in dark mode */
+:root[data-theme="dark"] #lang,
+:root[data-theme="dark"] select {
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 10 10'><path d='M2 4l3 3 3-3' stroke='%23ffffff' stroke-width='1.4' fill='none' stroke-linecap='round' stroke-linejoin='round'/></svg>");
 }
 #selector .selector:hover::after {
     transform: translateX(3px);
-    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='14' viewBox='0 0 10 14'><path d='M3 2 L8 7 L3 12' fill='none' stroke='%23c45a2c' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='14' viewBox='0 0 10 14'><path d='M3 2 L8 7 L3 12' fill='none' stroke='%23000000' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/></svg>");
 }
 #selector .selector:active { background: var(--surface-active); }
 
 /* Each selector button's icon — white stroke on charcoal chip */
-#selector-initialize::before { background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23f4ede0' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M5 5h6v6H5zM13 5h6v6h-6zM5 13h6v6H5zM13 13h6v6h-6z'/></svg>"); }
-#selector-cheats::before     { background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23f4ede0' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><circle cx='12' cy='12' r='9'/><circle cx='12' cy='12' r='5'/><circle cx='12' cy='12' r='1.5' fill='%23f4ede0'/></svg>"); }
-#selector-macros::before     { background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23f4ede0' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polygon points='13,2 4,14 11,14 9,22 19,9 13,9' fill='%23f4ede0'/></svg>"); }
-#selector-settings::before   { background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23f4ede0' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><circle cx='12' cy='12' r='3'/><path d='M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z'/></svg>"); }
-#selector-server::before     { background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23f4ede0' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><rect x='2' y='3' width='20' height='6' rx='1'/><rect x='2' y='15' width='20' height='6' rx='1'/><circle cx='6' cy='6' r='0.6' fill='%23f4ede0'/><circle cx='6' cy='18' r='0.6' fill='%23f4ede0'/></svg>"); }
-#selector-plugins::before    { background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23f4ede0' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M19 11a2 2 0 0 1 0 4h-1v3a2 2 0 0 1-2 2h-3a2 2 0 0 1 0-4v-1h-4v1a2 2 0 0 1 0 4H6a2 2 0 0 1-2-2v-3H3a2 2 0 0 1 0-4h1v-1h0a2 2 0 0 1 0-4h1V5a2 2 0 0 1 2-2h3v0a2 2 0 0 1 4 0v0h3a2 2 0 0 1 2 2v3h0a2 2 0 0 1 0 4z'/></svg>"); }
-#selector-finder::before     { background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23f4ede0' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><circle cx='11' cy='11' r='7'/><line x1='21' y1='21' x2='16' y2='16'/></svg>"); }
-#selector-dev-mode::before   { background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23f4ede0' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='8,18 2,12 8,6'/><polyline points='16,6 22,12 16,18'/></svg>"); }
-#selector-console::before    { background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23f4ede0' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><rect x='2' y='3' width='20' height='18' rx='1'/><polyline points='6,8 10,12 6,16'/><line x1='12' y1='16' x2='17' y2='16'/></svg>"); }
+#selector-initialize::before { background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M5 5h6v6H5zM13 5h6v6h-6zM5 13h6v6H5zM13 13h6v6h-6z'/></svg>"); }
+#selector-cheats::before     { background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><circle cx='12' cy='12' r='9'/><circle cx='12' cy='12' r='5'/><circle cx='12' cy='12' r='1.5' fill='%23000000'/></svg>"); }
+#selector-macros::before     { background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polygon points='13,2 4,14 11,14 9,22 19,9 13,9' fill='%23000000'/></svg>"); }
+#selector-settings::before   { background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><circle cx='12' cy='12' r='3'/><path d='M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z'/></svg>"); }
+#selector-server::before     { background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><rect x='2' y='3' width='20' height='6' rx='1'/><rect x='2' y='15' width='20' height='6' rx='1'/><circle cx='6' cy='6' r='0.6' fill='%23000000'/><circle cx='6' cy='18' r='0.6' fill='%23000000'/></svg>"); }
+#selector-plugins::before    { background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M19 11a2 2 0 0 1 0 4h-1v3a2 2 0 0 1-2 2h-3a2 2 0 0 1 0-4v-1h-4v1a2 2 0 0 1 0 4H6a2 2 0 0 1-2-2v-3H3a2 2 0 0 1 0-4h1v-1h0a2 2 0 0 1 0-4h1V5a2 2 0 0 1 2-2h3v0a2 2 0 0 1 4 0v0h3a2 2 0 0 1 2 2v3h0a2 2 0 0 1 0 4z'/></svg>"); }
+#selector-finder::before     { background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><circle cx='11' cy='11' r='7'/><line x1='21' y1='21' x2='16' y2='16'/></svg>"); }
+#selector-dev-mode::before   { background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='8,18 2,12 8,6'/><polyline points='16,6 22,12 16,18'/></svg>"); }
+#selector-console::before    { background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><rect x='2' y='3' width='20' height='18' rx='1'/><polyline points='6,8 10,12 6,16'/><line x1='12' y1='16' x2='17' y2='16'/></svg>"); }
 
 /* ===== Details / Accordions ===== */
 #app > section > details {
@@ -722,7 +645,7 @@ button:disabled, input:disabled, select:disabled, textarea:disabled {
     content: '';
     width: 10px;
     height: 14px;
-    background: no-repeat center / contain url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='14' viewBox='0 0 10 14'><path d='M3 2 L8 7 L3 12' fill='none' stroke='%235d564b' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+    background: no-repeat center / contain url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='14' viewBox='0 0 10 14'><path d='M3 2 L8 7 L3 12' fill='none' stroke='%23000000' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/></svg>");
     flex-shrink: 0;
     transition: transform var(--duration) var(--ease);
 }
@@ -742,7 +665,7 @@ button:disabled, input:disabled, select:disabled, textarea:disabled {
 }
 #app > section > details[open] > summary:not(.no)::before {
     transform: rotate(90deg);
-    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='14' viewBox='0 0 10 14'><path d='M3 2 L8 7 L3 12' fill='none' stroke='%23c45a2c' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='14' viewBox='0 0 10 14'><path d='M3 2 L8 7 L3 12' fill='none' stroke='%23000000' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/></svg>");
 }
 #app > section > details[open] > summary {
     background: var(--bg-3);
@@ -799,15 +722,17 @@ button:disabled, input:disabled, select:disabled, textarea:disabled {
     flex-shrink: 0;
     transition: background-color var(--duration) var(--ease);
 }
-.state.active  { background: var(--orange); }
-.state.succeed { background: var(--moss); }
-.state.error   { background: var(--error); }
+/* status chips — the machine-state colors */
+.state.active  { background: var(--state-active);  border-color: var(--state-active);  box-shadow: 0 0 6px -1px var(--state-active); }
+.state.succeed { background: var(--state-success); border-color: var(--state-success); box-shadow: 0 0 6px -1px var(--state-success); }
+.state.error   { background: var(--state-error);   border-color: var(--state-error);   box-shadow: 0 0 6px -1px var(--state-error); }
 .state.pending {
-    background: var(--gold);
+    background: var(--state-pending);
+    border-color: var(--state-pending);
     animation: pendingBlink 1s steps(2, end) infinite;
 }
 @keyframes pendingBlink {
-    50% { background: var(--bg-3); }
+    50% { background: var(--bg-3); border-color: var(--ink-1); }
 }
 
 /* ===== Toggle switch — rectangular, mechanical feel ===== */
@@ -846,19 +771,19 @@ button:disabled, input:disabled, select:disabled, textarea:disabled {
 [type="checkbox"]:disabled { opacity: 0.4; cursor: not-allowed; }
 [type="checkbox"]:focus-visible { outline: 1.5px solid var(--orange); outline-offset: 2px; }
 
-/* listening state */
+/* listening state — amber "working" pulse */
 button#listen-sub.listening,
 button#listen-main.listening {
-    background: var(--orange);
+    background: var(--state-pending);
     border-color: var(--ink-1);
-    color: #fff;
+    color: #000;
     animation: pendingBlink 1s steps(2, end) infinite;
 }
 
-/* selected toggle item */
+/* selected toggle item — inverse ink block */
 .selected {
-    color: var(--ink-1) !important;
-    background: var(--gold) !important;
+    color: var(--bg-base) !important;
+    background: var(--ink-1) !important;
     border-color: var(--ink-1) !important;
 }
 
@@ -892,11 +817,12 @@ button#listen-main.listening {
     overflow: hidden;
     padding-bottom: 4px;
 }
+/* the console is a real terminal — a fixed dark panel in BOTH themes */
 #console-out {
     flex: 1;
     overflow-y: auto;
     width: 100%;
-    background: var(--ink-1);
+    background: #0a0a0a;
     border: 1.2px solid var(--ink-1);
     padding: 10px 12px;
     display: flex;
@@ -904,9 +830,9 @@ button#listen-main.listening {
     gap: 2px;
 }
 #console-out > p {
-    font-family: 'IBM Plex Mono', monospace;
+    font-family: var(--mono);
     font-size: 10.5px;
-    color: var(--bg-3);
+    color: #d0d0d0;
     width: 100%;
     white-space: pre-wrap;
     word-break: break-word;
@@ -914,15 +840,15 @@ button#listen-main.listening {
 #console-input {
     width: 100% !important;
     max-width: none !important;
-    background: var(--ink-1);
+    background: #0a0a0a;
     border: 1.2px solid var(--ink-1);
-    color: var(--bg-base);
-    font-family: 'IBM Plex Mono', monospace;
+    color: #f0f0f0;
+    font-family: var(--mono);
     font-size: 11px;
     padding-left: 26px;
 }
 #console > #console-input {
-    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'><path d='M3 3l3 3-3 3' stroke='%23e8a838' stroke-width='1.6' fill='none' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'><path d='M3 3l3 3-3 3' stroke='%2300e08a' stroke-width='1.6' fill='none' stroke-linecap='round' stroke-linejoin='round'/></svg>");
     background-repeat: no-repeat;
     background-position: 8px center;
 }
@@ -983,21 +909,21 @@ button#listen-main.listening {
     content: '';
     width: 10px;
     height: 14px;
-    background: no-repeat center / contain url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='14' viewBox='0 0 10 14'><path d='M3 2 L8 7 L3 12' fill='none' stroke='%235d564b' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+    background: no-repeat center / contain url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='14' viewBox='0 0 10 14'><path d='M3 2 L8 7 L3 12' fill='none' stroke='%23000000' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/></svg>");
     flex-shrink: 0;
     transition: transform var(--duration) var(--ease);
 }
 #finder-out details[open] summary::before {
     transform: rotate(90deg);
-    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='14' viewBox='0 0 10 14'><path d='M3 2 L8 7 L3 12' fill='none' stroke='%23c45a2c' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='14' viewBox='0 0 10 14'><path d='M3 2 L8 7 L3 12' fill='none' stroke='%23000000' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/></svg>");
 }
 
 /* ===== Dev mode ===== */
 #perf-out {
-    font-family: 'IBM Plex Mono', monospace;
+    font-family: var(--mono);
     font-size: 10px;
-    color: var(--bg-base);
-    background: var(--ink-1);
+    color: #d0d0d0;
+    background: #0a0a0a;
     padding: 10px 12px;
     border: 1.2px solid var(--ink-1);
     overflow-x: auto;
@@ -1054,8 +980,8 @@ button#listen-main.listening {
     letter-spacing: 0.04em;
 }
 
-/* ===== Tailwind utility overrides — remap to Workshop palette ===== */
-.text-red-400      { color: var(--error) !important; }
+/* ===== Tailwind utility overrides — remap to terminal palette ===== */
+.text-red-400      { color: var(--state-error) !important; }
 .text-neutral-500  { color: var(--ink-3) !important; }
 .text-neutral-400  { color: var(--ink-3) !important; }
 .text-neutral-300  { color: var(--ink-2) !important; }
@@ -1065,7 +991,230 @@ button#listen-main.listening {
 .bg-neutral-950    { background: var(--ink-1) !important; }
 .border-neutral-200,
 .border-neutral-300 { border-color: var(--ink-1) !important; }
-.bg-sky-400        { background: var(--orange) !important; }
+.bg-sky-400        { background: var(--state-active) !important; }
 
 /* ===== Visibility helpers ===== */
 [hidden] { display: none !important; }
+
+/* ============================================================
+   THEME TOGGLE — top-left pill
+   ============================================================ */
+#theme-toggle {
+    position: fixed;
+    top: 12px;
+    left: 12px;
+    z-index: 1000;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--mono);
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--ink-1);
+    background: var(--surface);
+    border: 1.2px solid var(--ink-1);
+    cursor: pointer;
+    user-select: none;
+    transition: background-color var(--duration) var(--ease), color var(--duration) var(--ease);
+}
+#theme-toggle:hover { background: var(--ink-1); color: var(--bg-base); }
+/* only show the toggle once inside the app, and shift it right of #back */
+body:has(#app:not(.hide)) #theme-toggle { left: 52px; }
+body:not(:has(#app:not(.hide))) #theme-toggle { display: none; }
+#theme-toggle .sun { display: none; }
+#theme-toggle .moon { display: inline; }
+:root[data-theme="dark"] #theme-toggle .sun { display: inline; }
+:root[data-theme="dark"] #theme-toggle .moon { display: none; }
+
+/* ============================================================
+   BOOT / LOADING SCREEN — the Anonymous cold-boot sequence
+   ============================================================ */
+#boot {
+    position: fixed;
+    inset: 0;
+    z-index: 4000;
+    display: flex;
+    flex-direction: column;
+    background: var(--bg-base);
+    overflow: hidden;
+    opacity: 1;
+    transition: opacity 520ms var(--ease);
+}
+#boot.boot-out {
+    opacity: 0;
+    pointer-events: none;
+}
+/* faint moving scanline for CRT/terminal feel */
+#boot::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: repeating-linear-gradient(
+        to bottom,
+        rgba(0,0,0,0.045) 0px,
+        rgba(0,0,0,0.045) 1px,
+        transparent 1px,
+        transparent 3px);
+    mix-blend-mode: multiply;
+    opacity: 0.6;
+    z-index: 3;
+}
+:root[data-theme="dark"] #boot::after {
+    background: repeating-linear-gradient(
+        to bottom,
+        rgba(255,255,255,0.05) 0px,
+        rgba(255,255,255,0.05) 1px,
+        transparent 1px,
+        transparent 3px);
+    mix-blend-mode: screen;
+}
+
+/* window chrome bar */
+#boot .boot-bar {
+    flex-shrink: 0;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0 12px;
+    background: var(--ink-1);
+    color: var(--bg-base);
+    border-bottom: 1.2px solid var(--ink-1);
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    z-index: 5;
+    user-select: none;
+}
+#boot .boot-bar .dots { display: flex; gap: 6px; }
+#boot .boot-bar .dots i {
+    width: 10px; height: 10px;
+    display: block;
+    border: 1.2px solid var(--bg-base);
+    background: transparent;
+}
+#boot .boot-bar .title { font-weight: 700; letter-spacing: 0.12em; }
+#boot .boot-bar .spacer { flex: 1; }
+#boot .boot-bar .clock { opacity: 0.7; font-size: 10px; letter-spacing: 0.1em; }
+
+/* body: logo + manifesto + log */
+#boot .boot-body {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 1fr;
+    align-content: center;
+    justify-items: center;
+    gap: 18px;
+    padding: 24px 22px 12px;
+    overflow: hidden;
+    z-index: 4;
+    position: relative;
+}
+
+#boot .boot-logo {
+    width: 150px;
+    height: 150px;
+    background: url('./anonymous-logo.png') no-repeat center / contain;
+    filter: none;
+    animation: bootLogoIn 900ms var(--ease-out) both, bootPulse 4s ease-in-out 900ms infinite;
+}
+:root[data-theme="dark"] #boot .boot-logo { filter: invert(1); }
+@keyframes bootLogoIn {
+    from { opacity: 0; transform: scale(0.82); filter: blur(6px); }
+    to   { opacity: 1; transform: scale(1); filter: blur(0); }
+}
+@keyframes bootPulse {
+    0%, 100% { opacity: 1; }
+    50%      { opacity: 0.82; }
+}
+
+/* manifesto — typed, monospaced, glitchy */
+#boot .manifesto {
+    width: 100%;
+    max-width: 340px;
+    font-family: var(--mono);
+    font-size: 13px;
+    line-height: 1.85;
+    letter-spacing: 0.04em;
+    color: var(--ink-1);
+    text-align: center;
+    min-height: 132px;
+}
+#boot .manifesto .line {
+    display: block;
+    white-space: nowrap;
+    overflow: hidden;
+    opacity: 0;
+}
+#boot .manifesto .line.show { opacity: 1; }
+#boot .manifesto .line .caret {
+    display: inline-block;
+    width: 8px;
+    height: 1.05em;
+    margin-left: 2px;
+    vertical-align: -0.18em;
+    background: var(--ink-1);
+    animation: caretBlink 0.9s steps(1) infinite;
+}
+#boot .manifesto .line.k { font-weight: 700; }
+#boot .manifesto .line.big {
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+@keyframes caretBlink { 50% { opacity: 0; } }
+
+/* boot log line (bottom) */
+#boot .boot-foot {
+    flex-shrink: 0;
+    z-index: 5;
+    padding: 8px 14px 10px;
+    border-top: 1.2px solid var(--ink-1);
+    background: var(--bg-base);
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.02em;
+}
+#boot .boot-log {
+    height: 15px;
+    overflow: hidden;
+    color: var(--ink-3);
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+#boot .boot-log b { color: var(--ink-1); font-weight: 700; }
+#boot .boot-log .amber { color: var(--state-pending); }
+#boot .boot-log .green { color: var(--state-success); }
+#boot .boot-log .blue  { color: var(--state-active); }
+#boot .boot-log .red   { color: var(--state-error); }
+
+#boot .boot-progress {
+    margin-top: 7px;
+    height: 6px;
+    width: 100%;
+    background: var(--bg-3);
+    border: 1.2px solid var(--ink-1);
+    overflow: hidden;
+}
+#boot .boot-progress > i {
+    display: block;
+    height: 100%;
+    width: 0%;
+    background: var(--state-pending);
+    transition: width 240ms var(--ease), background-color 240ms var(--ease);
+}
+#boot .boot-progress.done > i { background: var(--state-success); }
+#boot .boot-meta {
+    margin-top: 6px;
+    display: flex;
+    justify-content: space-between;
+    color: var(--ink-4);
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}

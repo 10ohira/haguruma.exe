@@ -5,13 +5,12 @@ import dotenv from "dotenv";
 import path from "path";
 
 import { createWindow } from "./data/utils";
-import { app, BrowserWindow, dialog, ipcMain, shell } from "electron";
+import { app, BrowserWindow, dialog, ipcMain } from "electron";
 import { autoUpdater } from "electron-updater";
 import isDev from "electron-is-dev";
 import frida from "frida";
 import { existsSync, readFileSync } from "fs";
 import { adb, attachProcess, autoConnectAdb, checkFridaPerm, connectFrida, connectAdbDevice, executeProcess, fileExist, fileName, fridaServerBin, getArch, getUrl, pushFile, startFrida } from "./data/frida";
-import { loginPixel, defaultWebUrl } from "./data/auth";
 import { exec } from "child_process";
 import { createServer as createPixelServer } from "./core/server";
 import type { ServerFacade } from "./core/server";
@@ -107,11 +106,11 @@ const getExceptNums = async (): Promise<number[]> => [];
 // main app events
 app.on("ready", async () => {
     main = createWindow("main", 380, 620, true, {
-        title: `はぐるま v${app.getVersion()}`,
+        title: `anonymous.exe v${app.getVersion()}`,
         maximizable: false,
         fullscreenable: false,
         fullscreen: false,
-        backgroundColor: "#f4ede0",
+        backgroundColor: "#ffffff",
         minWidth: 340,
         minHeight: 520,
     }, async () => {
@@ -162,10 +161,11 @@ app.on("ready", async () => {
         exitApp();
     });
 
+    // login was removed in the anonymous.exe remaster: once the updater has
+    // settled (or errored), go straight into the control panel.
     const sendPostUpdate = () => {
         if(main.isDestroyed()) return;
-        const bypass = process.env.PIXEL_DEV_BYPASS_AUTH === 'true';
-        main.webContents.send(bypass ? "enter" : "updater-done");
+        main.webContents.send("enter");
     };
 
     autoUpdater.on("error", (err) => {
@@ -179,23 +179,6 @@ app.on("ready", async () => {
 
     autoUpdater.on("update-not-available", () => {
         sendPostUpdate();
-    });
-
-    // haguruma.web authentication (operator ID + password)
-    ipcMain.handle("auth:login", async (_e, payload: { id?: string; password?: string }) => {
-        try {
-            const id = (payload?.id || '').trim();
-            const password = payload?.password || '';
-            if(!id || !password) return { ok: false, error: 'ID / Password required' };
-            return await loginPixel(id, password);
-        } catch (err:any) {
-            Logger.error("auth:login error", err);
-            return { ok: false, error: err?.message || 'login error' };
-        }
-    });
-    ipcMain.on("open-web", () => {
-        const url = process.env.HAGURUMA_WEB_URL || process.env.PIXEL_WEB_URL || defaultWebUrl;
-        shell.openExternal(url).catch(err => Logger.error("openExternal error", err));
     });
 
     // web server (create after windows + state function exist)

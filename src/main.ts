@@ -1324,14 +1324,10 @@ $$_('.config').forEach((el:HTMLElement) => {
 const bounds = localStorage.getItem('layout');
 ipcRenderer.send('init', keybinds, config, wpdata, bounds ? JSON.parse(bounds) : null);
 
-// auto updater
-ipcRenderer.on('update', () => {
-    $_('updp').classList.add('hide');
-    $_('updbar').classList.remove('hide');
-})
-ipcRenderer.on('download', (e, progress:number) => {
-    $_('updprg').style.width = `${progress}%`;
-})
+// auto-updater progress is surfaced on the boot screen (see boot.ts).
+
+// Reveal the control panel. Login was removed in the anonymous.exe remaster,
+// so every selector (including the former perm-gated ones) is always shown.
 const enterApp = () => {
     $_('selector-dev-mode').classList.remove('hide');
     $_('selector-console').classList.remove('hide');
@@ -1340,7 +1336,6 @@ const enterApp = () => {
         // reveal previously perm-gated cheat selectors
         if(el.classList.contains('selector')) el.classList.remove('hide');
     });
-    $_('login').classList.add('hide');
     $_('app').classList.remove('hide');
 };
 ipcRenderer.on('enter', () => {

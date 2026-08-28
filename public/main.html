@@ -3,11 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>はぐるま</title>
+    <title>anonymous.exe</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600;700&family=Noto+Sans+JP:wght@500;700&display=swap" media="print" onload="this.media='all'">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600;700&family=Share+Tech+Mono&display=swap" media="print" onload="this.media='all'">
     <link rel="stylesheet" href="./output.css">
+    <script>
+        // apply persisted theme before first paint to avoid a flash
+        try {
+            var t = localStorage.getItem('theme');
+            if (t === 'dark' || t === 'light') document.documentElement.setAttribute('data-theme', t);
+        } catch (e) {}
+    </script>
 </head>
 <body>
     <!-- background watermark (gear silhouette in low opacity) -->
@@ -21,39 +28,48 @@
     </select>
     <!-- back button -->
     <button id="back" class="hide" aria-label="back"></button>
+    <!-- theme toggle (light / dark terminal) -->
+    <button id="theme-toggle" aria-label="toggle theme" title="Toggle theme">
+        <span class="moon">D</span><span class="sun">L</span>
+    </button>
     <!-- in-app brand badge -->
     <div id="brand" aria-hidden="true">
         <span class="dot"></span>
-        <span class="name">はぐるま</span>
+        <span class="name">anonymous.exe</span>
         <span class="ver">v1.57.0</span>
     </div>
-    <!-- login page -->
-    <div class="page" id="login">
-        <div class="hero">
-            <img src="./icon.svg" alt="icon">
-            <div class="wordmark">はぐるま</div>
-            <div class="meta">
-                <span>v1.57.0</span>
-                <span class="sep"></span>
-                <span>Workshop</span>
-                <span class="sep"></span>
-                <span>歯車</span>
+
+    <!-- ============================================================
+         BOOT / LOADING SCREEN
+         ============================================================ -->
+    <div id="boot">
+        <div class="boot-bar">
+            <span class="dots"><i></i><i></i><i></i></span>
+            <span class="title">anonymous.exe</span>
+            <span class="spacer"></span>
+            <span class="clock" id="boot-clock">--:--:--</span>
+        </div>
+        <div class="boot-body">
+            <div class="boot-logo" role="img" aria-label="Anonymous"></div>
+            <div class="manifesto" id="manifesto" aria-hidden="true">
+                <span class="line k" data-text="Knowledge is free."></span>
+                <span class="line big" data-text="We are Anonymous."></span>
+                <span class="line" data-text="We are Legion."></span>
+                <span class="line" data-text="We do not forgive."></span>
+                <span class="line" data-text="We do not forget."></span>
+                <span class="line k" data-text="Expect us."></span>
             </div>
         </div>
-        <div class="form">
-            <!-- auto updater -->
-            <p id="updp" class="w-full text-center" data-lang="checking-for-updates"></p>
-            <div id="updbar" class="w-full bar hide flex rounded-full bg-neutral-300 h-2">
-                <div id="updprg" class="prg flex rounded-full bg-sky-400 h-2 transition-all" style="width: 0%;"></div>
-            </div>
-            <!-- token -->
-            <div id="logform" class="flex flex-col gap-1 hide">
-                <input id="key" type="password" data-lang-ph="key" class="w-full text-center">
-                <button id="logbtn" class="w-full" data-lang="login"></button>
-                <p id="logerr" class="w-full text-red-400 text-center"></p>
+        <div class="boot-foot">
+            <div class="boot-log" id="boot-log"><b>&gt;</b> initializing&hellip;</div>
+            <div class="boot-progress" id="boot-progress"><i></i></div>
+            <div class="boot-meta">
+                <span id="boot-status">BOOT</span>
+                <span id="boot-pct">0%</span>
             </div>
         </div>
     </div>
+
     <!-- main page -->
     <div class="page hide" id="app">
         <section id="selector">
