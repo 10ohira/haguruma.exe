@@ -487,6 +487,7 @@ function init(){
                     switch(args[0]){
                         case 'esp':{
                             if(!args[1]) send(['clear-esp']);
+                            break;
                         }
                         case 'no-recoil':       applyXaPatch('no-recoil',       !!args[1]); break;
                         case 'no-clip':         applyXaPatch('no-clip',         !!args[1]); break;
@@ -862,8 +863,8 @@ function loop(){
                 const pc = cambase.add(anOffset["pitch"])
                 const yw = cambase.add(anOffset["yaw"])
                 const x = epos.add(eposOffset["x"])
-                const y = epos.add(eposOffset["x"])
-                const z = epos.add(eposOffset["x"])
+                const y = epos.add(eposOffset["y"])
+                const z = epos.add(eposOffset["z"])
                 if(keymap["NUMPAD 8"]){
                     pc.writeFloat(pc.readFloat() + camspeed)
                 }
@@ -1009,6 +1010,21 @@ function loop(){
             if(cheats['grenade'] && (!keybinds['grenade'] || keymap[keybinds['grenade']])){
                 // an.add(anOffset['grenade-base']).writeS8(1);
                 epos.add(eposOffset['gc']).writeFloat(0);
+            }
+            if(cheats['kda-booster']){
+                // Ported from Mtool (anonymous): force the KDA-farming character
+                // code and keep the skill charged every frame.
+                // char == 0xB5 (OFF_COOLDOWN_0), skill == 0x135 (OFF_INF_SKILL_G).
+                epos.add(eposOffset['char']).writeU8(14);
+                epos.add(eposOffset['skill']).writeU8(1);
+            }
+            if(cheats['bava-hack']){
+                // Ported from Mtool (anonymous): "bava" skill exploit — pin the
+                // skill timer plus character code so the skill keeps firing.
+                // timer == 0xD0 (OFF_TIMER), char == 0xB5, skill == 0x135.
+                epos.add(eposOffset['timer']).writeFloat(0.98);
+                epos.add(eposOffset['char']).writeU8(25);
+                epos.add(eposOffset['skill']).writeU8(1);
             }
             if(cheats['debuff']){
                 if(

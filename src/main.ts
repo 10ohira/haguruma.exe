@@ -933,6 +933,18 @@ const lan:{[key:string]:{[key:string]:string}} = {
         'ja':'クッカーバフ',
         'zh':'烹饪器BUFF',
     },
+    'kda-booster':{
+        'en':'KDA Booster',
+        'ko':'KDA 부스터',
+        'ja':'KDAブースター',
+        'zh':'KDA助推器',
+    },
+    'bava-hack':{
+        'en':'Bava Hack',
+        'ko':'바바 핵',
+        'ja':'ババハック',
+        'zh':'Bava外挂',
+    },
     'changer':{
         'en':'Changer',
         'ko':'체인저',
