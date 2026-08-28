@@ -611,12 +611,12 @@ button:disabled, input:disabled, select:disabled, textarea:disabled {
 #app > section > *,
 #app > section > details > *,
 #macro-list,
-#macros-list > main {
+#macro-list > main {
     width: 100%;
 }
 #app > section > details,
 #macro-list,
-#macros-list {
+#macro-list {
     display: flex;
     flex-direction: column;
 }
@@ -1006,7 +1006,7 @@ button#listen-main.listening {
 }
 
 /* ===== Macros ===== */
-#macros-list:empty::before {
+#macro-list:empty::before {
     content: '';
     display: block;
     height: 160px;
@@ -1014,21 +1014,21 @@ button#listen-main.listening {
     opacity: 0.7;
     margin: 24px auto 8px;
 }
-#macros-list > main {
+#macro-list > main {
     background: var(--bg-2);
     border: 1.2px solid var(--ink-1);
     padding: 8px 12px;
     margin-bottom: 4px;
     transition: background-color var(--duration) var(--ease);
 }
-#macros-list > main:hover { background: var(--bg-1); }
-#macros-list > main > div {
+#macro-list > main:hover { background: var(--bg-1); }
+#macro-list > main > div {
     font-size: 12px;
     font-weight: 700;
     color: var(--ink-1);
     letter-spacing: 0.02em;
 }
-#macros-list > main > button {
+#macro-list > main > button {
     width: 32px !important;
     padding: 4px;
     background: var(--orange);
@@ -1038,7 +1038,7 @@ button#listen-main.listening {
     font-size: 14px;
     flex-shrink: 0;
 }
-#macros-list > main > button:hover {
+#macro-list > main > button:hover {
     background: var(--orange-deep);
     color: #fff;
 }
