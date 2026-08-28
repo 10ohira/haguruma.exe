@@ -1,10 +1,11 @@
 {
   "name": "haguruma",
-  "version": "1.56.0",
+  "version": "1.57.0",
   "description": "はぐるま - milkchoco frida tool",
   "main": "dist/index.js",
   "scripts": {
     "start": "electron .",
+    "predist": "npm run build",
     "dist": "electron-builder --publish never",
     "watch": "concurrently \"tsc -w\" \"npx tailwindcss -i ./public/global.css -o ./public/output.css --watch\" \"tsc -w --project tsconfig.scripts.json\"",
     "build": "node scripts/fetch-binaries.cjs && tsc && npx tailwindcss -i ./public/global.css -o ./public/output.css --minify && tsc --project tsconfig.scripts.json && node scripts/inject-offsets.cjs",
