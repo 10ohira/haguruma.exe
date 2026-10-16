@@ -106,7 +106,7 @@ const getExceptNums = async (): Promise<number[]> => [];
 // main app events
 app.on("ready", async () => {
     main = createWindow("main", 380, 620, true, {
-        title: `はぐるま v${app.getVersion()}`,
+        title: `Gits v${app.getVersion()}`,
         maximizable: false,
         fullscreenable: false,
         fullscreen: false,

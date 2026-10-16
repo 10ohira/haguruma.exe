@@ -5,32 +5,34 @@
 @tailwind utilities;
 
 /* ============================================================
-   はぐるま — WORKSHOP design system
-   Light-theme industrial drafting language.
-   Charcoal on cream, hairline borders, square corners,
-   IBM Plex type, gear motifs.
+   Gits — GitHub Primer (dark) design system
+   Dark canvas, #30363d hairline borders, 6px corners,
+   system UI type, blue accents / green primary, GitHub mark.
    ============================================================ */
 
 :root {
-    --bg-base:   #f4ede0;
-    --bg-1:      #faf4e7;
-    --bg-2:      #fbf6ec;
-    --bg-3:      #f0e6d2;
-    --bg-4:      #e6dac3;
+    /* darkest inset (terminals / code panels) */
+    --bg-inset:  #010409;
 
-    --surface:        #fbf6ec;
-    --surface-hover:  #f5ecd8;
-    --surface-active: #ecdfc4;
+    --bg-base:   #0d1117;   /* page canvas */
+    --bg-1:      #21262d;   /* hover raise  */
+    --bg-2:      #161b22;   /* surface: cards / inputs / buttons */
+    --bg-3:      #21262d;   /* raised chips / tracks */
+    --bg-4:      #30363d;   /* borders / icon chip */
 
-    --ink-1:     #1f1a14;
-    --ink-2:     #3a3329;
-    --ink-3:     #5d564b;
-    --ink-4:     #8a8275;
+    --surface:        #161b22;
+    --surface-hover:  #21262d;
+    --surface-active: #30363d;
 
-    --border:        #1f1a14;
-    --border-soft:   rgba(31, 26, 20, 0.18);
-    --border-line:   rgba(31, 26, 20, 0.32);
-    --border-focus:  #c45a2c;
+    --ink-1:     #e6edf3;   /* primary text */
+    --ink-2:     #c9d1d9;   /* secondary text */
+    --ink-3:     #8b949e;   /* muted text */
+    --ink-4:     #6e7681;   /* subtle text */
+
+    --border:        #30363d;
+    --border-soft:   rgba(240, 246, 252, 0.10);
+    --border-line:   rgba(240, 246, 252, 0.16);
+    --border-focus:  #1f6feb;
 
     /* legacy alias (kept so any selector that referenced text-* still works) */
     --text-1: var(--ink-1);
@@ -38,35 +40,40 @@
     --text-3: var(--ink-3);
     --text-4: var(--ink-4);
 
-    --orange:      #c45a2c;
-    --orange-deep: #9c3f17;
-    --gold:        #e8a838;
-    --steel:       #3a6fbf;
-    --moss:        #5a7242;
+    /* legacy palette names retained; values remapped to Primer */
+    --orange:      #1f6feb;   /* interactive accent (focus / active / progress) */
+    --orange-deep: #1158c7;
+    --gold:        #d29922;   /* attention */
+    --steel:       #58a6ff;   /* link blue */
+    --moss:        #238636;   /* success green */
 
-    --accent:      #c45a2c;
-    --accent-2:    #e8a838;
-    --accent-3:    #3a6fbf;
-    --accent-soft: rgba(196, 90, 44, 0.10);
-    --accent-glow: rgba(196, 90, 44, 0.32);
+    --accent:      #1f6feb;
+    --accent-2:    #d29922;
+    --accent-3:    #58a6ff;
+    --accent-soft: rgba(56, 139, 253, 0.12);
+    --accent-glow: rgba(56, 139, 253, 0.40);
 
-    --success: #5a7242;
-    --warning: #e8a838;
-    --error:   #b14638;
+    --success: #238636;
+    --warning: #d29922;
+    --error:   #f85149;
 
-    /* sharp edges — drafting feel */
-    --radius-xs: 0;
-    --radius-sm: 0;
-    --radius:    0;
-    --radius-lg: 0;
-    --radius-xl: 0;
-    --radius-pill: 0;
+    /* rounded corners — Primer feel */
+    --radius-xs: 4px;
+    --radius-sm: 4px;
+    --radius:    6px;
+    --radius-lg: 8px;
+    --radius-xl: 12px;
+    --radius-pill: 999px;
 
     --duration-fast: 100ms;
     --duration:      160ms;
     --duration-slow: 280ms;
     --ease:     cubic-bezier(0.4, 0, 0.2, 1);
     --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
+
+    /* fonts — GitHub system stacks */
+    --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', 'Noto Sans JP', Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji';
+    --font-mono: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
 }
 
 * {
@@ -76,12 +83,12 @@
 }
 
 *::selection {
-    background: var(--ink-1);
-    color: var(--bg-2);
+    background: var(--accent-glow);
+    color: var(--ink-1);
 }
 
 html, body {
-    font-family: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-family: var(--font-sans);
     font-weight: 500;
     font-size: 13px;
     line-height: 1.45;
@@ -90,10 +97,10 @@ html, body {
     background: var(--bg-base);
     /* drafting grid — fully static (cheap repeating linear-gradients, no SVG noise) */
     background-image:
-        linear-gradient(to right,  rgba(31, 26, 20, 0.045) 1px, transparent 1px),
-        linear-gradient(to bottom, rgba(31, 26, 20, 0.045) 1px, transparent 1px),
-        linear-gradient(to right,  rgba(31, 26, 20, 0.10)  1px, transparent 1px),
-        linear-gradient(to bottom, rgba(31, 26, 20, 0.10)  1px, transparent 1px);
+        linear-gradient(to right,  rgba(240, 246, 252, 0.022) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(240, 246, 252, 0.022) 1px, transparent 1px),
+        linear-gradient(to right,  rgba(240, 246, 252, 0.045) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(240, 246, 252, 0.045) 1px, transparent 1px);
     background-size: 24px 24px, 24px 24px, 120px 120px, 120px 120px;
     background-attachment: fixed;
     width: 100vw;
@@ -113,7 +120,7 @@ body::after {
     height: 28px;
     pointer-events: none;
     z-index: 5;
-    border-color: var(--ink-1);
+    border-color: var(--border);
     border-style: solid;
     border-width: 0;
     opacity: 0.55;
@@ -135,13 +142,12 @@ body::after {
     position: fixed;
     pointer-events: none;
     z-index: 0;
-    right: -120px;
-    bottom: -80px;
-    width: 520px;
-    height: 290px;
-    background: url('./gif-watermark.gif') no-repeat right bottom / contain;
-    opacity: 0.08;
-    filter: grayscale(1) contrast(1.2);
+    right: -80px;
+    bottom: -70px;
+    width: 360px;
+    height: 360px;
+    background: url('./icon.svg') no-repeat right bottom / contain;
+    opacity: 0.05;
 }
 
 .hide {
@@ -170,11 +176,11 @@ canvas {
     text-transform: uppercase;
     color: var(--ink-2);
     background: var(--surface);
-    border: 1.2px solid var(--ink-1);
+    border: 1.2px solid var(--border);
     cursor: pointer;
     appearance: none;
     transition: background-color var(--duration) var(--ease);
-    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 10 10'><path d='M2 4l3 3 3-3' stroke='%231f1a14' stroke-width='1.4' fill='none' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 10 10'><path d='M2 4l3 3 3-3' stroke='%238b949e' stroke-width='1.4' fill='none' stroke-linecap='round' stroke-linejoin='round'/></svg>");
     background-repeat: no-repeat;
     background-position: right 10px center;
 }
@@ -201,7 +207,7 @@ canvas {
     justify-content: center;
     color: var(--ink-1);
     background: var(--surface);
-    border: 1.2px solid var(--ink-1);
+    border: 1.2px solid var(--border);
     cursor: pointer;
     transition: background-color var(--duration) var(--ease);
 }
@@ -211,7 +217,7 @@ canvas {
     content: '';
     width: 10px;
     height: 14px;
-    background: no-repeat center / contain url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='14' viewBox='0 0 10 14'><path d='M7 2 L2 7 L7 12' fill='none' stroke='%231f1a14' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+    background: no-repeat center / contain url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='14' viewBox='0 0 10 14'><path d='M7 2 L2 7 L7 12' fill='none' stroke='%238b949e' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/></svg>");
 }
 
 /* ===== Brand badge (in-app top center) ===== */
@@ -225,9 +231,10 @@ canvas {
     align-items: center;
     gap: 10px;
     padding: 5px 12px 5px 8px;
-    background: var(--ink-1);
-    color: var(--bg-base);
-    border: 1.2px solid var(--ink-1);
+    background: var(--bg-2);
+    color: var(--ink-1);
+    border: 1.2px solid var(--border);
+    border-radius: var(--radius-pill);
     user-select: none;
     pointer-events: none;
 }
@@ -240,18 +247,18 @@ body:has(#app:not(.hide)) #brand { display: flex; }
     filter: brightness(1.1);
 }
 #brand .name {
-    font-family: 'Noto Sans JP', 'IBM Plex Sans', sans-serif;
+    font-family: var(--font-sans);
     font-size: 11px;
     font-weight: 700;
     letter-spacing: 0.18em;
-    color: var(--bg-base);
+    color: var(--ink-1);
 }
 #brand .ver {
     font-size: 9.5px;
     font-weight: 500;
     letter-spacing: 0.1em;
     color: var(--gold);
-    font-family: 'IBM Plex Mono', monospace;
+    font-family: var(--font-mono);
 }
 
 /* ===== Page ===== */
@@ -288,23 +295,21 @@ body:has(#app:not(.hide)) #brand { display: flex; }
     margin-bottom: 6px;
 }
 
-/* hero gear GIF (IMG_1530) renders as the first hero element.
-   Trimmed to the rotating-gear range (10 frames, no morph) and the white
-   frame is baked transparent so it composites cleanly on any bg. */
+/* hero mark — the Gits (GitHub) icon, rendered as the first hero element */
 #login .hero::before {
     content: '';
     display: block;
-    width: 190px;
-    height: 142px;
-    background: url('./gif-hero.gif') no-repeat center / contain;
-    margin-bottom: -4px;
+    width: 128px;
+    height: 128px;
+    background: url('./icon.svg') no-repeat center / contain;
+    margin-bottom: 2px;
 }
 
-/* original <img> tag in #login is replaced by the hero gif above */
+/* original <img> tag in #login is replaced by the hero mark above */
 #login img { display: none !important; }
 
 #login .wordmark {
-    font-family: 'Noto Sans JP', 'IBM Plex Sans', sans-serif;
+    font-family: var(--font-sans);
     font-size: 30px;
     font-weight: 700;
     letter-spacing: 0.32em;
@@ -318,7 +323,7 @@ body:has(#app:not(.hide)) #brand { display: flex; }
     display: flex;
     align-items: center;
     gap: 10px;
-    font-family: 'IBM Plex Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 10px;
     font-weight: 600;
     letter-spacing: 0.22em;
@@ -340,7 +345,7 @@ body:has(#app:not(.hide)) #brand { display: flex; }
     position: relative;
 }
 
-/* Workshop accent: 3px bar to the left of the form column */
+/* Primer accent: 3px bar to the left of the form column */
 #login > div.form::before {
     content: '';
     position: absolute;
@@ -354,28 +359,32 @@ body:has(#app:not(.hide)) #brand { display: flex; }
 #updp {
     width: 100%;
     text-align: center;
-    font-family: 'IBM Plex Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 10.5px;
     color: var(--ink-3);
     letter-spacing: 0.12em;
     text-transform: uppercase;
     padding: 6px 0;
 }
-/* loading spinner GIF (IMG_1532) sits beside the updater text */
+/* CSS ring spinner beside the updater text (Primer accent) */
 #updp:not(.hide)::before {
     content: '';
     display: inline-block;
-    width: 22px;
-    height: 22px;
+    width: 13px;
+    height: 13px;
     vertical-align: middle;
     margin-right: 10px;
-    background: url('./gif-spinner.gif') no-repeat center / contain;
+    border: 2px solid var(--border);
+    border-top-color: var(--accent);
+    border-radius: var(--radius-pill);
+    animation: updSpin 0.7s linear infinite;
 }
+@keyframes updSpin { to { transform: rotate(360deg); } }
 
 #updbar {
     height: 4px !important;
     background: var(--bg-3) !important;
-    border: 1.2px solid var(--ink-1) !important;
+    border: 1.2px solid var(--border) !important;
     overflow: hidden;
     border-radius: 0 !important;
 }
@@ -388,7 +397,7 @@ body:has(#app:not(.hide)) #brand { display: flex; }
 #logform { gap: 10px !important; }
 
 #logerr {
-    font-family: 'IBM Plex Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 11px;
     color: var(--error);
     text-align: center;
@@ -398,7 +407,7 @@ body:has(#app:not(.hide)) #brand { display: flex; }
 
 #loglink {
     color: var(--orange);
-    font-family: 'IBM Plex Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 11px;
     text-decoration: none;
     text-align: center;
@@ -426,9 +435,9 @@ button, input, select, textarea {
 input, select, textarea {
     padding: 8px 11px;
     background: var(--bg-2);
-    border: 1.2px solid var(--ink-1);
+    border: 1.2px solid var(--border);
     color: var(--ink-1);
-    font-family: 'IBM Plex Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 12px;
 }
 input::placeholder, textarea::placeholder {
@@ -438,7 +447,7 @@ input::placeholder, textarea::placeholder {
 }
 input:hover, select:hover, textarea:hover { background: var(--bg-1); }
 input:focus, select:focus, textarea:focus {
-    background: #ffffff;
+    background: var(--bg-base);
     border-color: var(--orange);
     box-shadow: inset 0 0 0 1px var(--orange);
 }
@@ -448,8 +457,8 @@ select {
     appearance: none;
     padding-right: 28px;
     cursor: pointer;
-    font-family: 'IBM Plex Sans', sans-serif;
-    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 10 10'><path d='M2 4l3 3 3-3' stroke='%231f1a14' stroke-width='1.4' fill='none' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+    font-family: var(--font-sans);
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 10 10'><path d='M2 4l3 3 3-3' stroke='%238b949e' stroke-width='1.4' fill='none' stroke-linecap='round' stroke-linejoin='round'/></svg>");
     background-repeat: no-repeat;
     background-position: right 10px center;
 }
@@ -473,7 +482,7 @@ input[type="color"] {
     height: 22px;
     padding: 2px;
     background: var(--bg-2);
-    border: 1.2px solid var(--ink-1);
+    border: 1.2px solid var(--border);
     cursor: pointer;
     overflow: hidden;
 }
@@ -493,14 +502,14 @@ input[type="range"] {
 input[type="range"]::-webkit-slider-runnable-track {
     height: 4px;
     background: var(--bg-3);
-    border: 1px solid var(--ink-1);
+    border: 1px solid var(--border);
 }
 input[type="range"]::-webkit-slider-thumb {
     -webkit-appearance: none;
     width: 14px;
     height: 14px;
     background: var(--orange);
-    border: 1.2px solid var(--ink-1);
+    border: 1.2px solid var(--border);
     margin-top: -6px;
 }
 input[type="range"]:hover::-webkit-slider-thumb { background: var(--orange-deep); }
@@ -508,31 +517,51 @@ input[type="range"]:hover::-webkit-slider-thumb { background: var(--orange-deep)
 /* ===== Buttons ===== */
 button {
     padding: 8px 12px;
-    background: var(--bg-2);
-    border: 1.2px solid var(--ink-1);
+    background: var(--bg-3);
+    border: 1.2px solid var(--border);
     color: var(--ink-1);
     cursor: pointer;
     font-weight: 600;
     letter-spacing: 0.04em;
-    font-family: 'IBM Plex Sans', sans-serif;
+    font-family: var(--font-sans);
 }
 button:hover {
-    background: var(--ink-1);
-    color: var(--bg-base);
+    background: var(--surface-active);
+    border-color: var(--ink-4);
+    color: var(--ink-1);
 }
-button:active { background: var(--ink-2); }
+button:active { background: var(--border); }
 button:disabled, input:disabled, select:disabled, textarea:disabled {
     opacity: 0.45;
     cursor: not-allowed;
 }
 
+/* Primary action buttons — GitHub green (the one-click connect + start agent) */
+#auto-connect,
+#start-agent,
+#server-start {
+    background: var(--success);
+    border-color: rgba(240, 246, 252, 0.10);
+    color: #fff;
+}
+#auto-connect:hover,
+#start-agent:hover,
+#server-start:hover {
+    background: #2ea043;
+    border-color: rgba(240, 246, 252, 0.10);
+    color: #fff;
+}
+#auto-connect:active,
+#start-agent:active,
+#server-start:active { background: #238636; }
+
 /* primary login button */
 #logbtn {
     padding: 12px 18px;
     background: var(--ink-1);
-    border: 1.2px solid var(--ink-1);
+    border: 1.2px solid var(--border);
     color: var(--bg-base);
-    font-family: 'IBM Plex Sans', sans-serif;
+    font-family: var(--font-sans);
     font-weight: 700;
     letter-spacing: 0.32em;
     text-transform: uppercase;
@@ -593,7 +622,7 @@ button:disabled, input:disabled, select:disabled, textarea:disabled {
     font-size: 10.5px;
     color: var(--ink-3);
     font-weight: 500;
-    font-family: 'IBM Plex Mono', monospace;
+    font-family: var(--font-mono);
     flex: 1;
     text-align: right;
     letter-spacing: 0.02em;
@@ -621,7 +650,7 @@ button:disabled, input:disabled, select:disabled, textarea:disabled {
     flex-direction: column;
 }
 
-/* ===== Selector (main nav) — sidebar style buttons w/ Workshop accent ===== */
+/* ===== Selector (main nav) — sidebar style buttons w/ Primer accent ===== */
 #selector {
     gap: 4px !important;
     padding: 4px 0 6px;
@@ -638,11 +667,11 @@ button:disabled, input:disabled, select:disabled, textarea:disabled {
     gap: 11px;
     padding: 10px 14px 10px 12px;
     text-align: left;
-    font-family: 'IBM Plex Sans', sans-serif;
+    font-family: var(--font-sans);
     font-weight: 600;
     font-size: 12.5px;
     background: var(--bg-2);
-    border: 1.2px solid var(--ink-1);
+    border: 1.2px solid var(--border);
     color: var(--ink-2);
     position: relative;
     letter-spacing: 0.06em;
@@ -656,7 +685,7 @@ button:disabled, input:disabled, select:disabled, textarea:disabled {
     display: inline-flex;
     width: 22px;
     height: 22px;
-    background-color: var(--ink-1);
+    background-color: var(--bg-4);
     background-repeat: no-repeat;
     background-position: center;
     background-size: 14px 14px;
@@ -668,7 +697,7 @@ button:disabled, input:disabled, select:disabled, textarea:disabled {
     margin-left: auto;
     width: 10px;
     height: 14px;
-    background: no-repeat center / contain url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='14' viewBox='0 0 10 14'><path d='M3 2 L8 7 L3 12' fill='none' stroke='%238a8275' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+    background: no-repeat center / contain url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='14' viewBox='0 0 10 14'><path d='M3 2 L8 7 L3 12' fill='none' stroke='%238b949e' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/></svg>");
     transition: transform var(--duration) var(--ease), background-image var(--duration) var(--ease);
 }
 #selector .selector:hover {
@@ -680,24 +709,24 @@ button:disabled, input:disabled, select:disabled, textarea:disabled {
 }
 #selector .selector:hover::after {
     transform: translateX(3px);
-    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='14' viewBox='0 0 10 14'><path d='M3 2 L8 7 L3 12' fill='none' stroke='%23c45a2c' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='14' viewBox='0 0 10 14'><path d='M3 2 L8 7 L3 12' fill='none' stroke='%2358a6ff' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/></svg>");
 }
 #selector .selector:active { background: var(--surface-active); }
 
 /* Each selector button's icon — white stroke on charcoal chip */
-#selector-initialize::before { background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23f4ede0' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M5 5h6v6H5zM13 5h6v6h-6zM5 13h6v6H5zM13 13h6v6h-6z'/></svg>"); }
-#selector-cheats::before     { background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23f4ede0' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><circle cx='12' cy='12' r='9'/><circle cx='12' cy='12' r='5'/><circle cx='12' cy='12' r='1.5' fill='%23f4ede0'/></svg>"); }
-#selector-macros::before     { background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23f4ede0' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polygon points='13,2 4,14 11,14 9,22 19,9 13,9' fill='%23f4ede0'/></svg>"); }
-#selector-settings::before   { background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23f4ede0' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><circle cx='12' cy='12' r='3'/><path d='M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z'/></svg>"); }
-#selector-server::before     { background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23f4ede0' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><rect x='2' y='3' width='20' height='6' rx='1'/><rect x='2' y='15' width='20' height='6' rx='1'/><circle cx='6' cy='6' r='0.6' fill='%23f4ede0'/><circle cx='6' cy='18' r='0.6' fill='%23f4ede0'/></svg>"); }
-#selector-plugins::before    { background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23f4ede0' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M19 11a2 2 0 0 1 0 4h-1v3a2 2 0 0 1-2 2h-3a2 2 0 0 1 0-4v-1h-4v1a2 2 0 0 1 0 4H6a2 2 0 0 1-2-2v-3H3a2 2 0 0 1 0-4h1v-1h0a2 2 0 0 1 0-4h1V5a2 2 0 0 1 2-2h3v0a2 2 0 0 1 4 0v0h3a2 2 0 0 1 2 2v3h0a2 2 0 0 1 0 4z'/></svg>"); }
-#selector-finder::before     { background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23f4ede0' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><circle cx='11' cy='11' r='7'/><line x1='21' y1='21' x2='16' y2='16'/></svg>"); }
-#selector-dev-mode::before   { background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23f4ede0' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='8,18 2,12 8,6'/><polyline points='16,6 22,12 16,18'/></svg>"); }
-#selector-console::before    { background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23f4ede0' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><rect x='2' y='3' width='20' height='18' rx='1'/><polyline points='6,8 10,12 6,16'/><line x1='12' y1='16' x2='17' y2='16'/></svg>"); }
+#selector-initialize::before { background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23e6edf3' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M5 5h6v6H5zM13 5h6v6h-6zM5 13h6v6H5zM13 13h6v6h-6z'/></svg>"); }
+#selector-cheats::before     { background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23e6edf3' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><circle cx='12' cy='12' r='9'/><circle cx='12' cy='12' r='5'/><circle cx='12' cy='12' r='1.5' fill='%23e6edf3'/></svg>"); }
+#selector-macros::before     { background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23e6edf3' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polygon points='13,2 4,14 11,14 9,22 19,9 13,9' fill='%23e6edf3'/></svg>"); }
+#selector-settings::before   { background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23e6edf3' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><circle cx='12' cy='12' r='3'/><path d='M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z'/></svg>"); }
+#selector-server::before     { background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23e6edf3' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><rect x='2' y='3' width='20' height='6' rx='1'/><rect x='2' y='15' width='20' height='6' rx='1'/><circle cx='6' cy='6' r='0.6' fill='%23e6edf3'/><circle cx='6' cy='18' r='0.6' fill='%23e6edf3'/></svg>"); }
+#selector-plugins::before    { background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23e6edf3' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M19 11a2 2 0 0 1 0 4h-1v3a2 2 0 0 1-2 2h-3a2 2 0 0 1 0-4v-1h-4v1a2 2 0 0 1 0 4H6a2 2 0 0 1-2-2v-3H3a2 2 0 0 1 0-4h1v-1h0a2 2 0 0 1 0-4h1V5a2 2 0 0 1 2-2h3v0a2 2 0 0 1 4 0v0h3a2 2 0 0 1 2 2v3h0a2 2 0 0 1 0 4z'/></svg>"); }
+#selector-finder::before     { background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23e6edf3' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><circle cx='11' cy='11' r='7'/><line x1='21' y1='21' x2='16' y2='16'/></svg>"); }
+#selector-dev-mode::before   { background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23e6edf3' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='8,18 2,12 8,6'/><polyline points='16,6 22,12 16,18'/></svg>"); }
+#selector-console::before    { background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23e6edf3' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><rect x='2' y='3' width='20' height='18' rx='1'/><polyline points='6,8 10,12 6,16'/><line x1='12' y1='16' x2='17' y2='16'/></svg>"); }
 
 /* ===== Details / Accordions ===== */
 #app > section > details {
-    border: 1.2px solid var(--ink-1);
+    border: 1.2px solid var(--border);
     background: var(--bg-2);
 }
 #app > section > details > summary {
@@ -707,7 +736,7 @@ button:disabled, input:disabled, select:disabled, textarea:disabled {
     padding: 8px 12px;
     cursor: pointer;
     user-select: none;
-    font-family: 'IBM Plex Sans', sans-serif;
+    font-family: var(--font-sans);
     font-size: 12.5px;
     font-weight: 700;
     letter-spacing: 0.04em;
@@ -722,7 +751,7 @@ button:disabled, input:disabled, select:disabled, textarea:disabled {
     content: '';
     width: 10px;
     height: 14px;
-    background: no-repeat center / contain url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='14' viewBox='0 0 10 14'><path d='M3 2 L8 7 L3 12' fill='none' stroke='%235d564b' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+    background: no-repeat center / contain url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='14' viewBox='0 0 10 14'><path d='M3 2 L8 7 L3 12' fill='none' stroke='%238b949e' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/></svg>");
     flex-shrink: 0;
     transition: transform var(--duration) var(--ease);
 }
@@ -731,7 +760,7 @@ button:disabled, input:disabled, select:disabled, textarea:disabled {
     width: 8px;
     height: 8px;
     background: var(--bg-3);
-    border: 1.2px solid var(--ink-1);
+    border: 1.2px solid var(--border);
     flex-shrink: 0;
     margin-left: 3px;
     transition: background-color var(--duration) var(--ease);
@@ -742,11 +771,11 @@ button:disabled, input:disabled, select:disabled, textarea:disabled {
 }
 #app > section > details[open] > summary:not(.no)::before {
     transform: rotate(90deg);
-    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='14' viewBox='0 0 10 14'><path d='M3 2 L8 7 L3 12' fill='none' stroke='%23c45a2c' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='14' viewBox='0 0 10 14'><path d='M3 2 L8 7 L3 12' fill='none' stroke='%2358a6ff' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/></svg>");
 }
 #app > section > details[open] > summary {
     background: var(--bg-3);
-    border-bottom: 1.2px solid var(--ink-1);
+    border-bottom: 1.2px solid var(--border);
 }
 #app > section > details > summary > p {
     flex: 1;
@@ -795,7 +824,7 @@ button:disabled, input:disabled, select:disabled, textarea:disabled {
     width: 10px;
     height: 10px;
     background: var(--bg-3);
-    border: 1.2px solid var(--ink-1);
+    border: 1.2px solid var(--border);
     flex-shrink: 0;
     transition: background-color var(--duration) var(--ease);
 }
@@ -817,7 +846,7 @@ button:disabled, input:disabled, select:disabled, textarea:disabled {
     width: 34px;
     height: 18px;
     background: var(--bg-3);
-    border: 1.2px solid var(--ink-1);
+    border: 1.2px solid var(--border);
     border-radius: 0;
     cursor: pointer;
     flex-shrink: 0;
@@ -837,7 +866,7 @@ button:disabled, input:disabled, select:disabled, textarea:disabled {
 [type="checkbox"]:hover { background: var(--bg-1); }
 [type="checkbox"]:checked {
     background: var(--orange);
-    border-color: var(--ink-1);
+    border-color: var(--border);
 }
 [type="checkbox"]:checked::before {
     left: 18px;
@@ -850,7 +879,7 @@ button:disabled, input:disabled, select:disabled, textarea:disabled {
 button#listen-sub.listening,
 button#listen-main.listening {
     background: var(--orange);
-    border-color: var(--ink-1);
+    border-color: var(--border);
     color: #fff;
     animation: pendingBlink 1s steps(2, end) infinite;
 }
@@ -859,18 +888,18 @@ button#listen-main.listening {
 .selected {
     color: var(--ink-1) !important;
     background: var(--gold) !important;
-    border-color: var(--ink-1) !important;
+    border-color: var(--border) !important;
 }
 
 /* ===== Keybind ===== */
 .keybind {
-    font-family: 'IBM Plex Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 10.5px;
     font-weight: 600;
     text-align: center;
     color: var(--ink-1);
     background: var(--bg-3);
-    border: 1.2px solid var(--ink-1);
+    border: 1.2px solid var(--border);
     letter-spacing: 0.08em;
     text-transform: uppercase;
 }
@@ -896,17 +925,17 @@ button#listen-main.listening {
     flex: 1;
     overflow-y: auto;
     width: 100%;
-    background: var(--ink-1);
-    border: 1.2px solid var(--ink-1);
+    background: var(--bg-inset);
+    border: 1.2px solid var(--border);
     padding: 10px 12px;
     display: flex;
     flex-direction: column;
     gap: 2px;
 }
 #console-out > p {
-    font-family: 'IBM Plex Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 10.5px;
-    color: var(--bg-3);
+    color: var(--ink-2);
     width: 100%;
     white-space: pre-wrap;
     word-break: break-word;
@@ -914,15 +943,15 @@ button#listen-main.listening {
 #console-input {
     width: 100% !important;
     max-width: none !important;
-    background: var(--ink-1);
-    border: 1.2px solid var(--ink-1);
-    color: var(--bg-base);
-    font-family: 'IBM Plex Mono', monospace;
+    background: var(--bg-inset);
+    border: 1.2px solid var(--border);
+    color: var(--ink-1);
+    font-family: var(--font-mono);
     font-size: 11px;
     padding-left: 26px;
 }
 #console > #console-input {
-    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'><path d='M3 3l3 3-3 3' stroke='%23e8a838' stroke-width='1.6' fill='none' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'><path d='M3 3l3 3-3 3' stroke='%23d29922' stroke-width='1.6' fill='none' stroke-linecap='round' stroke-linejoin='round'/></svg>");
     background-repeat: no-repeat;
     background-position: 8px center;
 }
@@ -955,18 +984,18 @@ button#listen-main.listening {
     width: 100%;
     font-size: 11px;
     color: var(--ink-3);
-    font-family: 'IBM Plex Mono', monospace;
+    font-family: var(--font-mono);
 }
 #finder-out details {
     width: 100%;
     background: var(--bg-2);
-    border: 1.2px solid var(--ink-1);
+    border: 1.2px solid var(--border);
     padding: 0;
 }
 #finder-out details summary {
     padding: 7px 12px;
     cursor: pointer;
-    font-family: 'IBM Plex Sans', sans-serif;
+    font-family: var(--font-sans);
     font-size: 12px;
     font-weight: 700;
     letter-spacing: 0.04em;
@@ -983,23 +1012,23 @@ button#listen-main.listening {
     content: '';
     width: 10px;
     height: 14px;
-    background: no-repeat center / contain url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='14' viewBox='0 0 10 14'><path d='M3 2 L8 7 L3 12' fill='none' stroke='%235d564b' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+    background: no-repeat center / contain url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='14' viewBox='0 0 10 14'><path d='M3 2 L8 7 L3 12' fill='none' stroke='%238b949e' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/></svg>");
     flex-shrink: 0;
     transition: transform var(--duration) var(--ease);
 }
 #finder-out details[open] summary::before {
     transform: rotate(90deg);
-    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='14' viewBox='0 0 10 14'><path d='M3 2 L8 7 L3 12' fill='none' stroke='%23c45a2c' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='14' viewBox='0 0 10 14'><path d='M3 2 L8 7 L3 12' fill='none' stroke='%2358a6ff' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/></svg>");
 }
 
 /* ===== Dev mode ===== */
 #perf-out {
-    font-family: 'IBM Plex Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 10px;
-    color: var(--bg-base);
-    background: var(--ink-1);
+    color: var(--ink-1);
+    background: var(--bg-inset);
     padding: 10px 12px;
-    border: 1.2px solid var(--ink-1);
+    border: 1.2px solid var(--border);
     overflow-x: auto;
     width: 100%;
     line-height: 1.55;
@@ -1016,7 +1045,7 @@ button#listen-main.listening {
 }
 #macro-list > main {
     background: var(--bg-2);
-    border: 1.2px solid var(--ink-1);
+    border: 1.2px solid var(--border);
     padding: 8px 12px;
     margin-bottom: 4px;
     transition: background-color var(--duration) var(--ease);
@@ -1032,7 +1061,7 @@ button#listen-main.listening {
     width: 32px !important;
     padding: 4px;
     background: var(--orange);
-    border: 1.2px solid var(--ink-1);
+    border: 1.2px solid var(--border);
     color: #fff;
     font-weight: 700;
     font-size: 14px;
@@ -1046,15 +1075,15 @@ button#listen-main.listening {
 /* ===== mobile-controller hint text — kept for compatibility ===== */
 #mobile-controller > div.text-neutral-400 {
     color: var(--ink-3) !important;
-    font-family: 'IBM Plex Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 11px;
     padding: 6px 12px;
     background: var(--bg-3);
-    border: 1.2px solid var(--ink-1);
+    border: 1.2px solid var(--border);
     letter-spacing: 0.04em;
 }
 
-/* ===== Tailwind utility overrides — remap to Workshop palette ===== */
+/* ===== Tailwind utility overrides — remap to Primer palette ===== */
 .text-red-400      { color: var(--error) !important; }
 .text-neutral-500  { color: var(--ink-3) !important; }
 .text-neutral-400  { color: var(--ink-3) !important; }
@@ -1062,9 +1091,9 @@ button#listen-main.listening {
 .bg-neutral-200,
 .bg-neutral-300    { background: var(--bg-3) !important; }
 .bg-neutral-900,
-.bg-neutral-950    { background: var(--ink-1) !important; }
+.bg-neutral-950    { background: var(--bg-inset) !important; }
 .border-neutral-200,
-.border-neutral-300 { border-color: var(--ink-1) !important; }
+.border-neutral-300 { border-color: var(--border) !important; }
 .bg-sky-400        { background: var(--orange) !important; }
 
 /* ===== Visibility helpers ===== */

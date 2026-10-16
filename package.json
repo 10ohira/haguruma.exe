@@ -1,7 +1,7 @@
 {
   "name": "haguruma",
   "version": "1.57.0",
-  "description": "はぐるま - milkchoco frida tool",
+  "description": "Gits - milkchoco frida tool",
   "main": "dist/index.js",
   "scripts": {
     "start": "electron .",
@@ -51,7 +51,7 @@
   },
   "build": {
     "appId": "com.tenohira.haguruma",
-    "productName": "はぐるま",
+    "productName": "Gits",
     "compression": "maximum",
     "win": {
       "target": "nsis",
@@ -59,7 +59,7 @@
     },
     "nsis": {
       "oneClick": true,
-      "artifactName": "はぐるま-Setup-${version}.exe"
+      "artifactName": "Gits-Setup-${version}.exe"
     },
     "directories": {
       "output": "build"
