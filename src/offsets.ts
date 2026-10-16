@@ -196,6 +196,10 @@ export const _symbols = {
     'buy.equip':                            "_ZN16SystemPacketSend5EquipEhhh",
     'buy.equipShort':                       "_ZN16SystemPacketSend5EquipEhht", // agent.ts uses this overload
     'buy.getRewardClassPackage':            "_ZN16SystemPacketSend12ClassPackage23GetRewardInClassPackageEhhmhhhh",
+    // ClassPackage::GetBonusCostumeInClassPackage(class, index). Ported from
+    // Mtool (actGetAllCostumes): sweeping index 2..7000 for a class unlocks
+    // every bonus costume for that class. agent.ts resolves it defensively.
+    'buy.getBonusCostume':                  "_ZN16SystemPacketSend12ClassPackage29GetBonusCostumeInClassPackageEhi",
 
     // ---- In-game logic / packets ----
     'ingame.hitUser':                       "_ZN16SystemPacketSend7HitUserERK9UserInforhS2_RKN7cocos2d4Vec3Esf",
@@ -210,6 +214,7 @@ export const _symbols = {
     'ingame.setEnableJump':                 "_ZN5Cloud8CharData13SetEnableJumpEb",
     'ingame.medicSelfHeal':                 "_ZN19SystemOfflinePacket20ProcessMedicSelfHealERK9UserInfor",
     'ingame.buffOnWheelleg':                "_ZN16SystemPacketSend14BuffOnWheellegERK9UserInfor",
+    'ingame.buffOnKhaos':                   "_ZN16SystemPacketSend11BuffOnKhaosERK9UserInforS2_",
     'ingame.buffMagoTotem':                 "_ZN16SystemPacketSend18BuffSkillMagoTotemEjRKSt4listIjSaIjEE",
     'ingame.timeOverRespawn':               "_ZN16SystemPacketSend22TimeOverRespawnWaitingERK9UserInfor",
     'ingame.changeMissionCount':            "_ZN16SystemPacketSend22SendChangeMissionCountEjmjt",

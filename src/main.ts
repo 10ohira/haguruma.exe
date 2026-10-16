@@ -909,6 +909,24 @@ const lan:{[key:string]:{[key:string]:string}} = {
         'ja':'マゴデバフ',
         'zh':'马戈减益',
     },
+    'debuff-khaos': {
+        'en':'Khaos Debuff',
+        'ko':'카오스 디버프',
+        'ja':'カオスデバフ',
+        'zh':'卡奥斯减益',
+    },
+    'debuff-choochoo': {
+        'en':'ChooChoo Debuff',
+        'ko':'츄츄 디버프',
+        'ja':'チュチュデバフ',
+        'zh':'ChooChoo减益',
+    },
+    'debuff-wheelleg': {
+        'en':'WheelLeg Debuff',
+        'ko':'호이레 디버프',
+        'ja':'ホイレデバフ',
+        'zh':'轮腿减益',
+    },
     'hide-me':{
         'en':'Hide Player',
         'ko':'플레이어 숨기기',
@@ -926,6 +944,48 @@ const lan:{[key:string]:{[key:string]:string}} = {
         'ko':'마고',
         'ja':'マゴ',
         'zh':'马戈',
+    },
+    'khaos':{
+        'en':'Khaos',
+        'ko':'카오스',
+        'ja':'カオス',
+        'zh':'卡奥斯',
+    },
+    'choochoo':{
+        'en':'ChooChoo',
+        'ko':'츄츄',
+        'ja':'チュチュ',
+        'zh':'ChooChoo',
+    },
+    'wheelleg':{
+        'en':'WheelLeg',
+        'ko':'호이레',
+        'ja':'ホイレ',
+        'zh':'轮腿',
+    },
+    'mix':{
+        'en':'Mix (All Buffs)',
+        'ko':'믹스 (전체 버프)',
+        'ja':'ミックス (全バフ)',
+        'zh':'混合 (全部BUFF)',
+    },
+    'unlock-all':{
+        'en':'Unlock All Costumes',
+        'ko':'전체 코스튬 해제',
+        'ja':'全装飾解放',
+        'zh':'解锁所有装饰',
+    },
+    'unlock-all-class':{
+        'en':'Class',
+        'ko':'클래스',
+        'ja':'クラス',
+        'zh':'职业',
+    },
+    'unlock-all-run':{
+        'en':'Unlock',
+        'ko':'해제',
+        'ja':'解放',
+        'zh':'解锁',
     },
     'cooker-buff':{
         'en':'Cooker Buff',
@@ -1427,6 +1487,10 @@ ipcRenderer.on('skillcode', (e, code:number) => {
 // })
 
 $_('change-NaN').addEventListener('click', () => {ipcRenderer.send('change-NaN');});
+$_('unlock-all-run').addEventListener('click', () => {
+    const sel = $_('unlock-all-class') as HTMLSelectElement;
+    ipcRenderer.send('unlock-costumes', parseInt(sel.value, 10) || 0);
+});
 
 const blurCurrent = () => {(document.activeElement as HTMLInputElement).blur();}
 const changePosition = () => {ipcRenderer.send('pos', [parseFloat(xel.value || "0"), parseFloat(yel.value || "0"), parseFloat(zel.value || "0")]);}

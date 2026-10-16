@@ -137,6 +137,11 @@ let purchaseT: any = null;
 
 let elec: any = null;
 let mago: any = null;
+// Ported from Mtool: per-class buff packets fired at focused/enemy entities.
+// May be null on older libMyGame.so builds — every call site guards.
+let khaos: any = null;
+let choochoo: any = null;
+let wheelleg: any = null;
 
 // Direct kick via SystemPacketSend::FMatchKickUserSlot. May be null on older
 // libMyGame.so builds that don't export the symbol — every call site guards.
@@ -333,6 +338,10 @@ function init(){
         purchaseT = makeNFunc(agentSyms['global.sendPurchasePassTier'], 'void', ['uint', 'uchar']);
         elec = makeNFunc(agentSyms['ingame.buffHitElectric'], 'void', ['pointer', 'uint', 'uint']);
         mago = makeNFunc(agentSyms['ingame.debuffSkillMagoTotem'], 'void', ['uint', 'uint']);
+        // BuffOnKhaos(me, target); CreateChooChooBuff(target); BuffOnWheelleg(target).
+        khaos    = makeNFunc(agentSyms['ingame.buffOnKhaos'],    'void', ['pointer', 'pointer']);
+        choochoo = makeNFunc(agentSyms['ingame.createChooChoo'], 'void', ['pointer']);
+        wheelleg = makeNFunc(agentSyms['ingame.buffOnWheelleg'], 'void', ['pointer']);
         fMatchKickUserSlot = makeNFunc(agentSyms['fmatch.kickUserSlot'], 'void', ['uchar']);
         attachNFunc(agentSyms['camera.getCameraUser'], {
             onLeave(retval) {
@@ -560,6 +569,38 @@ function init(){
                             mago(mynum, entity.add(eposOffset['number']).readS32());
                         });
                     }
+                    // ---- Ported from Mtool buff buttons (fire at focused enemies) ----
+                    if(key === keybinds['khaos'] && action === 'DOWN' && cheats['khaos']
+                        && epos && !epos.isNull() && khaos){
+                        getFocusedEntity().filter(entity => !isDead(entity)).forEach(entity => {
+                            khaos(epos, entity);
+                        });
+                    }
+                    if(key === keybinds['choochoo'] && action === 'DOWN' && cheats['choochoo']
+                        && epos && !epos.isNull() && choochoo){
+                        getFocusedEntity().filter(entity => !isDead(entity)).forEach(entity => {
+                            choochoo(entity);
+                        });
+                    }
+                    if(key === keybinds['wheelleg'] && action === 'DOWN' && cheats['wheelleg']
+                        && epos && !epos.isNull() && wheelleg){
+                        getFocusedEntity().filter(entity => !isDead(entity)).forEach(entity => {
+                            wheelleg(entity);
+                        });
+                    }
+                    // Mix: fire Electric + Mago + Khaos + ChooChoo + WheelLeg at once.
+                    if(key === keybinds['mix'] && action === 'DOWN' && cheats['mix']
+                        && epos && !epos.isNull()){
+                        const mynum = epos.add(eposOffset['number']).readS32();
+                        getFocusedEntity().filter(entity => !isDead(entity)).forEach(entity => {
+                            const num = entity.add(eposOffset['number']).readS32();
+                            if(elec)     elec(entity, mynum, mynum);
+                            if(mago)     mago(mynum, num);
+                            if(khaos)    khaos(epos, entity);
+                            if(choochoo) choochoo(entity);
+                            if(wheelleg) wheelleg(entity);
+                        });
+                    }
                     if(key === keybinds['infinite-jump'] && action === 'DOWN' && cheats['infinite-jump']){
                         if(!epos) return;
                         if(epos.isNull()) return;
@@ -614,6 +655,7 @@ function init(){
                 } else if(name === 'ctm-castle-choco'){ ctmCastleChoco();
                 } else if(name === 'ctm-mountain-milk'){ ctmMountainMilk();
                 } else if(name === 'ctm-mountain-choco'){ ctmMountainChoco();
+                } else if(name === 'unlock-costumes'){ unlockAllCostumes(+args[0] || 0);
                 // } else if(name === 'scan-epos'){
                 //     epos = scanEpos();
                 // } else if(name === 'scan-entity'){
@@ -1034,6 +1076,9 @@ function loop(){
                     let ignoreExcepts = config['debuff-ignore'] || false;
                     let delectric = config['debuff-electric'] || false;
                     let dmago = config['debuff-mago'] || false;
+                    let dkhaos = config['debuff-khaos'] || false;
+                    let dchoochoo = config['debuff-choochoo'] || false;
+                    let dwheelleg = config['debuff-wheelleg'] || false;
                     let mynum = epos.add(eposOffset['number']).readS32();
                     getFilteredEntityList(ignoreExcepts)
                     .filter(entity => !isTeam(epos, entity))
@@ -1042,6 +1087,9 @@ function loop(){
                         let num = entity.add(eposOffset['number']).readS32();
                         if(delectric) elec(entity, mynum, mynum)
                         if(dmago) mago(mynum, num);
+                        if(dkhaos && khaos) khaos(epos, entity);
+                        if(dchoochoo && choochoo) choochoo(entity);
+                        if(dwheelleg && wheelleg) wheelleg(entity);
                     });
                     lastDebuffTime = Date.now();
                 }
@@ -1873,6 +1921,37 @@ async function ctmMountainChoco(){
     await home();
     await teleport(epos, -162, 0, -90);
     await home();
+}
+
+// Ported from Mtool (actGetAllCostumes): unlock every bonus costume for a
+// class by sweeping ClassPackage::GetBonusCostumeInClassPackage(class, index)
+// over index 2..7000. One-shot, button-driven from the host UI.
+function unlockAllCostumes(classId: number){
+    if(!classId || classId < 1){
+        send(['log', '[unlock] invalid class id', classId]);
+        return;
+    }
+    if(!_libMyGame){
+        send(['log', '[unlock] module not loaded']);
+        return;
+    }
+    const addr = Module.findExportByName(libName, agentSyms['buy.getBonusCostume']);
+    if(!addr){
+        send(['log', '[unlock] export not found: GetBonusCostumeInClassPackage']);
+        return;
+    }
+    const fn = new NativeFunction(addr, 'void', ['uchar', 'int']);
+    let done = 0;
+    for(let i = 2; i <= 7000; i++){
+        try {
+            fn(classId & 0xff, i);
+            done++;
+        } catch (e) {
+            send(['log', '[unlock] call error at index', i, String(e)]);
+            break;
+        }
+    }
+    send(['log', '[unlock] class', classId, 'costumes unlocked, calls', done]);
 }
 
 rpc.exports = {

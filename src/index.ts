@@ -560,6 +560,7 @@ app.on("ready", async () => {
                                 ipcMain.on("ctm-castle-choco", (e) => script.post(['ctm-castle-choco']));
                                 ipcMain.on("ctm-mountain-milk", (e) => script.post(['ctm-mountain-milk']));
                                 ipcMain.on("ctm-mountain-choco", (e) => script.post(['ctm-mountain-choco']));
+                                ipcMain.on("unlock-costumes", (e, cid: number) => script.post(['unlock-costumes', cid]));
                                 ipcMain.on("execute-cmd", (e, data:string) => script.post(['execute-cmd', data]));
                                 if(isDev) {
                                     ipcMain.on("get-ranges", (e, data:string) => script.post(['get-ranges', data]));
@@ -600,6 +601,7 @@ app.on("ready", async () => {
                                 ipcMain.removeAllListeners("get-ranges");
                                 ipcMain.removeAllListeners("find-ranges");
                                 ipcMain.removeAllListeners("execute-cmd");
+                                ipcMain.removeAllListeners("unlock-costumes");
                                 emitter.removeAllListeners("gyro");
                                 emitter.removeAllListeners("execute-macro");
                                 exp = null;
