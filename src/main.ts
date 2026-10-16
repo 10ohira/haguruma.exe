@@ -27,18 +27,6 @@ const lan:{[key:string]:{[key:string]:string}} = {
         'ja':'更新を確認中',
         'zh':'检查更新中',
     },
-    'key':{
-        'en':'Key',
-        'ko':'키',
-        'ja':'キー',
-        'zh':'键',
-    },
-    'login':{
-        'en':'Login',
-        'ko':'로그인',
-        'ja':'ログイン',
-        'zh':'登录',
-    },
     'initialize':{
         'en':'Initialize',
         'ko':'초기화',
