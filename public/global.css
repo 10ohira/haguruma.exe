@@ -5,9 +5,9 @@
 @tailwind utilities;
 
 /* ============================================================
-   Gits — GitHub Primer (dark) design system
+   Gits — monochrome (black & white) design system
    Dark canvas, #30363d hairline borders, 6px corners,
-   system UI type, blue accents / green primary, GitHub mark.
+   system UI type, white/gray accents (no hue), GitHub mark.
    ============================================================ */
 
 :root {
@@ -32,7 +32,7 @@
     --border:        #30363d;
     --border-soft:   rgba(240, 246, 252, 0.10);
     --border-line:   rgba(240, 246, 252, 0.16);
-    --border-focus:  #1f6feb;
+    --border-focus:  #f0f6fc;
 
     /* legacy alias (kept so any selector that referenced text-* still works) */
     --text-1: var(--ink-1);
@@ -40,22 +40,22 @@
     --text-3: var(--ink-3);
     --text-4: var(--ink-4);
 
-    /* legacy palette names retained; values remapped to Primer */
-    --orange:      #1f6feb;   /* interactive accent (focus / active / progress) */
-    --orange-deep: #1158c7;
-    --gold:        #d29922;   /* attention */
-    --steel:       #58a6ff;   /* link blue */
-    --moss:        #238636;   /* success green */
+    /* legacy palette names retained; values remapped to monochrome */
+    --orange:      #f0f6fc;   /* interactive accent (focus / active / progress) → white */
+    --orange-deep: #c9d1d9;
+    --gold:        #8b949e;   /* attention → gray */
+    --steel:       #c9d1d9;   /* link → light gray */
+    --moss:        #f0f6fc;   /* success → white */
 
-    --accent:      #1f6feb;
-    --accent-2:    #d29922;
-    --accent-3:    #58a6ff;
-    --accent-soft: rgba(56, 139, 253, 0.12);
-    --accent-glow: rgba(56, 139, 253, 0.40);
+    --accent:      #f0f6fc;
+    --accent-2:    #8b949e;
+    --accent-3:    #c9d1d9;
+    --accent-soft: rgba(240, 246, 252, 0.10);
+    --accent-glow: rgba(240, 246, 252, 0.22);
 
-    --success: #238636;
-    --warning: #d29922;
-    --error:   #f85149;
+    --success: #f0f6fc;
+    --warning: #8b949e;
+    --error:   #ffffff;
 
     /* rounded corners — Primer feel */
     --radius-xs: 4px;
@@ -536,24 +536,24 @@ button:disabled, input:disabled, select:disabled, textarea:disabled {
     cursor: not-allowed;
 }
 
-/* Primary action buttons — GitHub green (the one-click connect + start agent) */
+/* Primary action buttons — inverted white (the one-click connect + start agent) */
 #auto-connect,
 #start-agent,
 #server-start {
-    background: var(--success);
-    border-color: rgba(240, 246, 252, 0.10);
-    color: #fff;
+    background: var(--ink-1);
+    border-color: var(--ink-1);
+    color: var(--bg-base);
 }
 #auto-connect:hover,
 #start-agent:hover,
 #server-start:hover {
-    background: #2ea043;
-    border-color: rgba(240, 246, 252, 0.10);
-    color: #fff;
+    background: #ffffff;
+    border-color: #ffffff;
+    color: var(--bg-base);
 }
 #auto-connect:active,
 #start-agent:active,
-#server-start:active { background: #238636; }
+#server-start:active { background: var(--ink-2); }
 
 /* primary login button */
 #logbtn {
@@ -705,11 +705,11 @@ button:disabled, input:disabled, select:disabled, textarea:disabled {
     background: var(--bg-1);
 }
 #selector .selector:hover::before {
-    background-color: var(--orange);
+    background-color: #484f58;
 }
 #selector .selector:hover::after {
     transform: translateX(3px);
-    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='14' viewBox='0 0 10 14'><path d='M3 2 L8 7 L3 12' fill='none' stroke='%2358a6ff' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='14' viewBox='0 0 10 14'><path d='M3 2 L8 7 L3 12' fill='none' stroke='%23f0f6fc' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/></svg>");
 }
 #selector .selector:active { background: var(--surface-active); }
 
@@ -771,7 +771,7 @@ button:disabled, input:disabled, select:disabled, textarea:disabled {
 }
 #app > section > details[open] > summary:not(.no)::before {
     transform: rotate(90deg);
-    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='14' viewBox='0 0 10 14'><path d='M3 2 L8 7 L3 12' fill='none' stroke='%2358a6ff' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='14' viewBox='0 0 10 14'><path d='M3 2 L8 7 L3 12' fill='none' stroke='%23f0f6fc' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/></svg>");
 }
 #app > section > details[open] > summary {
     background: var(--bg-3);
@@ -880,7 +880,7 @@ button#listen-sub.listening,
 button#listen-main.listening {
     background: var(--orange);
     border-color: var(--border);
-    color: #fff;
+    color: var(--bg-base);
     animation: pendingBlink 1s steps(2, end) infinite;
 }
 
@@ -951,7 +951,7 @@ button#listen-main.listening {
     padding-left: 26px;
 }
 #console > #console-input {
-    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'><path d='M3 3l3 3-3 3' stroke='%23d29922' stroke-width='1.6' fill='none' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'><path d='M3 3l3 3-3 3' stroke='%238b949e' stroke-width='1.6' fill='none' stroke-linecap='round' stroke-linejoin='round'/></svg>");
     background-repeat: no-repeat;
     background-position: 8px center;
 }
@@ -1018,7 +1018,7 @@ button#listen-main.listening {
 }
 #finder-out details[open] summary::before {
     transform: rotate(90deg);
-    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='14' viewBox='0 0 10 14'><path d='M3 2 L8 7 L3 12' fill='none' stroke='%2358a6ff' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='14' viewBox='0 0 10 14'><path d='M3 2 L8 7 L3 12' fill='none' stroke='%23f0f6fc' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/></svg>");
 }
 
 /* ===== Dev mode ===== */
@@ -1062,14 +1062,14 @@ button#listen-main.listening {
     padding: 4px;
     background: var(--orange);
     border: 1.2px solid var(--border);
-    color: #fff;
+    color: var(--bg-base);
     font-weight: 700;
     font-size: 14px;
     flex-shrink: 0;
 }
 #macro-list > main > button:hover {
     background: var(--orange-deep);
-    color: #fff;
+    color: var(--bg-base);
 }
 
 /* ===== mobile-controller hint text — kept for compatibility ===== */
