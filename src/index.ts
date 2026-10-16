@@ -10,7 +10,7 @@ import { autoUpdater } from "electron-updater";
 import isDev from "electron-is-dev";
 import frida from "frida";
 import { existsSync, readFileSync } from "fs";
-import { adb, attachProcess, autoConnectAdb, checkFridaPerm, connectFrida, connectAdbDevice, executeProcess, fileExist, fileName, fridaServerBin, getArch, getUrl, pushFile, startFrida } from "./data/frida";
+import { adb, attachProcess, autoConnectAdb, checkFridaPerm, connectFrida, connectAdbDevice, executeProcess, fileExist, fileName, fridaServerBin, getArch, getUrl, isFridaServerRunning, pushFile, startFrida } from "./data/frida";
 import { loginPixel, defaultWebUrl } from "./data/auth";
 import { exec } from "child_process";
 import { createServer as createPixelServer } from "./core/server";
@@ -327,6 +327,14 @@ app.on("ready", async () => {
             }
             const perm = await checkFridaPerm(adbId, filename);
             if(!perm){ state("server", "error", "Frida permissions denied"); return false; }
+            // Avoid spawning a second frida-server on top of a running one: the
+            // duplicate fails to bind its port and trips the crash handler,
+            // flipping the whole connect flow to "error" even though a healthy
+            // server is already up (common on repeated auto-connect / reconnect).
+            if(await isFridaServerRunning(adbId)) {
+                state("server", "active", "Frida server already running");
+                return true;
+            }
             if(!await startFrida(adbId, filename, () => state("server", "error", "Frida server crashed"))) {
                 state("server", "error", "Failed to start frida server");
                 return false;

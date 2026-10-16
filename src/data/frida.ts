@@ -63,13 +63,30 @@ export const getArch = async (id:string):Promise<string> => {
     return arch
 }
 
+// Best-effort check for an already-running frida-server. The on-device binary
+// name is long (frida-server-<ver>-android-<arch>) and ps truncates comm, so we
+// match the stable "frida-server" prefix rather than the full filename. Wrapped
+// so any shell/parse failure degrades to "unknown" (false) and the caller just
+// proceeds to start one — i.e. this never makes startup worse than before.
+export const isFridaServerRunning = async (id:string):Promise<boolean> => {
+    if(id === '') return false
+    try {
+        const out = await adb.shell(id, `su -c "ps -A 2>/dev/null | grep frida-server | grep -v grep"`)
+        return typeof out === 'string' && out.trim().length > 0
+    } catch (_) {
+        return false
+    }
+}
+
 export const startFrida = async (id:string, filename:string, onCrashed:() => void):Promise<boolean> => {
     if(id === '') {
         Logger.error('[*] ADB not connected');
         return false;
     }
     try{
-        const server = adb.shell(id, `su -c /data/local/tmp/${filename}`)
+        // Quote the path so a filename with unusual characters can't split the
+        // `su -c` command.
+        const server = adb.shell(id, `su -c "/data/local/tmp/${filename}"`)
         server.then(onCrashed)
         return true
     } catch (err) {
@@ -93,12 +110,14 @@ const FRIDA_CONNECT_ATTEMPTS = 4
 // Each strategy is bounded and retried, so a transient miss never hangs forever.
 const resolveFridaDevice = async (serial:string):Promise<frida.Device | null> => {
     const deviceManager = frida.getDeviceManager()
+    let lastErr:unknown = null
     for (let attempt = 1; attempt <= FRIDA_CONNECT_ATTEMPTS; attempt++) {
         // 1. Wait up to FRIDA_DEVICE_TIMEOUT for the device to appear by id.
         try {
             const device = await frida.getDevice(serial, { timeout: FRIDA_DEVICE_TIMEOUT })
             if (device) return device
         } catch (err) {
+            lastErr = err
             Logger.warn(`[*] Frida getDevice attempt ${attempt} failed: ${err}`)
         }
         // 2. Fall back to scanning what's currently enumerated.
@@ -109,6 +128,7 @@ const resolveFridaDevice = async (serial:string):Promise<frida.Device | null> =>
                 ?? devices.find(d => d.type === frida.DeviceType.Remote)
             if (match) return match
         } catch (err) {
+            lastErr = err
             Logger.warn(`[*] Frida enumerateDevices attempt ${attempt} failed: ${err}`)
         }
         // 3. Last resort: connect to a frida-server listening over TCP.
@@ -116,10 +136,12 @@ const resolveFridaDevice = async (serial:string):Promise<frida.Device | null> =>
             const remote = await deviceManager.addRemoteDevice(serial)
             if (remote) return remote
         } catch (err) {
+            lastErr = err
             Logger.warn(`[*] Frida addRemoteDevice attempt ${attempt} failed: ${err}`)
         }
         if (attempt < FRIDA_CONNECT_ATTEMPTS) await delay(800 * attempt)
     }
+    if (lastErr) Logger.error(`[*] Frida device resolution exhausted for ${serial}: ${lastErr}`)
     return null
 }
 
